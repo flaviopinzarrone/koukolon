@@ -1,7 +1,7 @@
 <!-- Le istruzioni su come usare ANT per eseguire il progetto, sono incluse nel file
      di README, nella home del progetto -->
 
-<project name="Tablut">
+<project name="koukolon">
 
     <target name="clean">
         <delete dir="build"/>
