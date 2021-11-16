@@ -1,3 +1,8 @@
 #!/bin/bash
 
-java -jar koukolon.jar $@
+exe="../out/artifacts/koukolon_jar/koukolon.jar"
+
+zip -d $exe 'META-INF/.SF' 'META-INF/.RSA' 'META-INF/*SF' > /dev/null
+
+java -jar $exe $@
+
