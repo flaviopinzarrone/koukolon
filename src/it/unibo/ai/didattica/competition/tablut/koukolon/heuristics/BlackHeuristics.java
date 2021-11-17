@@ -55,6 +55,9 @@ public class BlackHeuristics extends Heuristics {
         weights.put(BLACK_ALIVE, 35.0);
         weights.put(WHITE_EATEN, 48.0);
         weights.put(BLACK_SURROUND_KING, 15.0);
+        /*
+            TODO: Aggiungere modifica del peso rispetto al numero di turni
+         */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
         weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         weights.put(BLOCK_FORK_POSITIONS, 2.0);
@@ -80,6 +83,7 @@ public class BlackHeuristics extends Heuristics {
         double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         double numberOfPawnsOnNarrowRhombus = (double) getNumberOnRhombus(rhombusNarrow) / NUM_TILES_ON_RHOMBUS;
         double numberOfPawnsBlocking = (double) getValuesOnSpecialCells(blockFork) / NUMBER_BLOCK_FORK;
+
         if (flag) {
             System.out.println("Number of wide rhombus: " + numberOfPawnsOnWideRhombus);
             System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
@@ -115,8 +119,8 @@ public class BlackHeuristics extends Heuristics {
 
 
     /**
-     * @return number of black pawns on tiles if condition is true, 0 otherwise
      * @param rhombus
+     * @return number of black pawns on tiles if condition is true, 0 otherwise
      */
     public int getNumberOnRhombus(int[][] rhombus) {
 
