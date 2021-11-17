@@ -72,7 +72,7 @@ public class WhiteHeuristics extends Heuristics {
         double bestPositions = (double) getNumberOnBestPositions() / NUM_BEST_POSITION;
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK)) / GameAshtonTablut.NUM_BLACK;
-        double blackSurroundKing = (double)(getNumEatenPositions(state) - checkNearPawns(state, kingPosition(state),State.Turn.BLACK.toString())) / getNumEatenPositions(state);
+        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(state, kingPosition(state),State.Turn.BLACK.toString())) / getNumEatingPositions(state);
         double protectionKing = protectionKing();
 
         int numberWinWays = countWinWays(state);
@@ -170,7 +170,7 @@ public class WhiteHeuristics extends Heuristics {
         ArrayList<int[]> pawnsPositions = (ArrayList<int[]>) positionNearPawns(state,kingPos,State.Pawn.BLACK.toString());
 
         //There is a black pawn that threatens the king and 2 pawns are enough to eat the king
-        if (pawnsPositions.size() == 1 && getNumEatenPositions(state) == 2){
+        if (pawnsPositions.size() == 1 && getNumEatingPositions(state) == 2){
             int[] enemyPos = pawnsPositions.get(0);
             //Used to store other position from where king could be eaten
             int[] targetPosition = new int[2];

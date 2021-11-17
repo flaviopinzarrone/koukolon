@@ -293,7 +293,7 @@ public abstract class Heuristics {
      * @param state
      * @return number of positions needed to eat king in the current state
      */
-    public int getNumEatenPositions(State state){
+    public int getNumEatingPositions(State state){
 
         int[] kingPosition = kingPosition(state);
 
