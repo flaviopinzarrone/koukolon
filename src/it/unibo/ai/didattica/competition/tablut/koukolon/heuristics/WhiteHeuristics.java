@@ -15,6 +15,7 @@ public class WhiteHeuristics extends Heuristics {
     private final String NUM_ESCAPES_KING = "numberOfWinEscapesKing";
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
     private final String PROTECTION_KING = "protectionKing";
+    private final String BLOCK_CITIZENS = "blockingCitizens";
 
 
     //Threshold used to decide whether to use best positions configuration
@@ -24,6 +25,10 @@ public class WhiteHeuristics extends Heuristics {
     private final static int[][] bestPositions = {
             {2,3},  {3,5},
             {5,3},  {6,5}
+    };
+
+    private final static int[][] blockPositions = {
+            {0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
     };
 
     private final static int NUM_BEST_POSITION = bestPositions.length;
@@ -48,6 +53,7 @@ public class WhiteHeuristics extends Heuristics {
         weights.put(NUM_ESCAPES_KING, 18.0);
         weights.put(BLACK_SURROUND_KING, 7.0);
         weights.put(PROTECTION_KING, 18.0);
+        weights.put(BLOCK_CITIZENS, 15.0);
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -75,6 +81,7 @@ public class WhiteHeuristics extends Heuristics {
         if(flag){
             System.out.println("Number of white alive: " + numberOfWhiteAlive);
             System.out.println("Number of white pawns in best positions " + bestPositions);
+            System.out.println("Number of white pawns in block positions " + blockPositions);
             System.out.println("Number of escapes: " + numberOfWinEscapesKing);
             System.out.println("Number of black surrounding king: " + blackSurroundKing);
         }
@@ -98,6 +105,34 @@ public class WhiteHeuristics extends Heuristics {
         return utilityValue;
     }
 
+    /**
+     * @return number of white pawns on blocking positions
+     */
+    private int getNumberOnBlockPositions() {
+
+        int num = 0;
+
+        if (state.getNumberOf(State.Pawn.WHITE) >= GameAshtonTablut.NUM_WHITE - THRESHOLD_BEST) {
+            for (int[] pos : blockPositions) {
+                if (state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.WHITE.toString())) {
+                    /*
+                        Check also if the blocking pawn is in the same board half of the king
+                        otherwise it's useless
+                     */
+                    if (kingPosition(state)[0] < 4 && pos[0] < 4)
+                        num++;
+                    else if (kingPosition(state)[0] > 4 && pos[0] > 4)
+                        num++;
+                    else if (kingPosition(state)[1] < 4 && pos[1] < 4)
+                        num++;
+                    else if (kingPosition(state)[1] > 4 && pos[1] > 4)
+                        num++;
+                }
+            }
+        }
+
+        return num;
+    }
 
     /**
      *
