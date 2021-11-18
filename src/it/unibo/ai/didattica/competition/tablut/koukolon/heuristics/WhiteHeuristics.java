@@ -53,7 +53,7 @@ public class WhiteHeuristics extends Heuristics {
         weights.put(NUM_ESCAPES_KING, 18.0);
         weights.put(BLACK_SURROUND_KING, 7.0);
         weights.put(PROTECTION_KING, 18.0);
-        weights.put(BLOCK_CITIZENS, 15.0);
+        //weights.put(BLOCK_CITIZENS, 15.0);
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -93,6 +93,7 @@ public class WhiteHeuristics extends Heuristics {
         values.put(NUM_ESCAPES_KING,numberOfWinEscapesKing);
         values.put(BLACK_SURROUND_KING,blackSurroundKing);
         values.put(PROTECTION_KING,protectionKing);
+
 
         for (int i=0; i < weights.size(); i++){
             utilityValue += weights.get(keys[i]) * values.get(keys[i]);

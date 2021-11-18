@@ -60,7 +60,7 @@ public class BlackHeuristics extends Heuristics {
          */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
         weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
-        weights.put(BLOCK_FORK_POSITIONS, 2.0);
+        weights.put(BLOCK_FORK_POSITIONS, 30.0);
 
         //Extraction of keys
         keys = new String[weights.size()];

@@ -18,10 +18,10 @@ import it.unibo.ai.didattica.competition.tablut.koukolon.heuristics.WhiteHeurist
 import it.unibo.ai.didattica.competition.tablut.exceptions.*;
 
 /**
- * 
+ *
  * Game engine inspired by the Ashton Rules of Tablut
- * 
- * 
+ *
+ *
  * @author A. Piretti, Andrea Galassi, Giuseppe Murro
  *
  */
@@ -56,12 +56,12 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 
 
 	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
-			String blackName) {
+							String blackName) {
 		this(new StateTablut(), repeated_moves_allowed, cache_size, logs_folder, whiteName, blackName);
 	}
 
 	public GameAshtonTablut(State state, int repeated_moves_allowed, int cache_size, String logs_folder,
-			String whiteName, String blackName) {
+							String whiteName, String blackName) {
 		super();
 		this.repeated_moves_allowed = repeated_moves_allowed;
 		this.cache_size = cache_size;
@@ -214,13 +214,13 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		if (a.getColumnTo() < state.getBoard().length - 2
 				&& state.getPawn(a.getRowTo(), a.getColumnTo() + 1).equalsPawn("B")
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("W")
-						|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("T")
-						|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2))
-								&& !(a.getColumnTo() + 2 == 8 && a.getRowTo() == 4)
-								&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 0)
-								&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 8)
-								&& !(a.getColumnTo() + 2 == 0 && a.getRowTo() == 4)))) {
+				|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("T")
+				|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("K")
+				|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2))
+				&& !(a.getColumnTo() + 2 == 8 && a.getRowTo() == 4)
+				&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 0)
+				&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 8)
+				&& !(a.getColumnTo() + 2 == 0 && a.getRowTo() == 4)))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
@@ -228,13 +228,13 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		// controllo se mangio a sinistra
 		if (a.getColumnTo() > 1 && state.getPawn(a.getRowTo(), a.getColumnTo() - 1).equalsPawn("B")
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("W")
-						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
-						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
-								&& !(a.getColumnTo() - 2 == 8 && a.getRowTo() == 4)
-								&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 0)
-								&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 8)
-								&& !(a.getColumnTo() - 2 == 0 && a.getRowTo() == 4)))) {
+				|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
+				|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("K")
+				|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
+				&& !(a.getColumnTo() - 2 == 8 && a.getRowTo() == 4)
+				&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 0)
+				&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 8)
+				&& !(a.getColumnTo() - 2 == 0 && a.getRowTo() == 4)))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() - 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
@@ -242,13 +242,13 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		// controllo se mangio sopra
 		if (a.getRowTo() > 1 && state.getPawn(a.getRowTo() - 1, a.getColumnTo()).equalsPawn("B")
 				&& (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("W")
-						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
-						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
-								&& !(a.getColumnTo() == 8 && a.getRowTo() - 2 == 4)
-								&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 0)
-								&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 8)
-								&& !(a.getColumnTo() == 0 && a.getRowTo() - 2 == 4)))) {
+				|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
+				|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("K")
+				|| (this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
+				&& !(a.getColumnTo() == 8 && a.getRowTo() - 2 == 4)
+				&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 0)
+				&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 8)
+				&& !(a.getColumnTo() == 0 && a.getRowTo() - 2 == 4)))) {
 			state.removePawn(a.getRowTo() - 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
@@ -257,13 +257,13 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		if (a.getRowTo() < state.getBoard().length - 2
 				&& state.getPawn(a.getRowTo() + 1, a.getColumnTo()).equalsPawn("B")
 				&& (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("W")
-						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
-						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
-								&& !(a.getColumnTo() == 8 && a.getRowTo() + 2 == 4)
-								&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 0)
-								&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 8)
-								&& !(a.getColumnTo() == 0 && a.getRowTo() + 2 == 4)))) {
+				|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
+				|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("K")
+				|| (this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
+				&& !(a.getColumnTo() == 8 && a.getRowTo() + 2 == 4)
+				&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 0)
+				&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 8)
+				&& !(a.getColumnTo() == 0 && a.getRowTo() + 2 == 4)))) {
 			state.removePawn(a.getRowTo() + 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
@@ -520,9 +520,9 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		// mangio a sinistra
 		if (a.getColumnTo() > 1 && state.getPawn(a.getRowTo(), a.getColumnTo() - 1).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("B")
-						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
-						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
-						|| (state.getBox(a.getRowTo(), a.getColumnTo() - 2).equals("e5")))) {
+				|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
+				|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
+				|| (state.getBox(a.getRowTo(), a.getColumnTo() - 2).equals("e5")))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() - 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
@@ -534,9 +534,9 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		// controllo se mangio sopra
 		if (a.getRowTo() > 1 && state.getPawn(a.getRowTo() - 1, a.getColumnTo()).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("B")
-						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
-						|| this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
-						|| (state.getBox(a.getRowTo() - 2, a.getColumnTo()).equals("e5")))) {
+				|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
+				|| this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
+				|| (state.getBox(a.getRowTo() - 2, a.getColumnTo()).equals("e5")))) {
 			state.removePawn(a.getRowTo() - 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
@@ -549,9 +549,9 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		if (a.getRowTo() < state.getBoard().length - 2
 				&& state.getPawn(a.getRowTo() + 1, a.getColumnTo()).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("B")
-						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
-						|| this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
-						|| (state.getBox(a.getRowTo() + 2, a.getColumnTo()).equals("e5")))) {
+				|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
+				|| this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
+				|| (state.getBox(a.getRowTo() + 2, a.getColumnTo()).equals("e5")))) {
 			state.removePawn(a.getRowTo() + 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
@@ -628,7 +628,7 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 	public void clearDrawConditions() {
 		drawConditions.clear();
 	}
-	
+
 
 	@Override
 	public void endGame(State state) {
@@ -1109,7 +1109,7 @@ public class GameAshtonTablut implements Game, Cloneable, aima.core.search.adver
 		return  heuristics.evaluateState();
 	}
 
-	
+
 	@Override
 	public Object clone() throws CloneNotSupportedException {
 		return super.clone();
