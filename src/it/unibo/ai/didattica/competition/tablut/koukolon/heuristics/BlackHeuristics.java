@@ -159,6 +159,7 @@ public class BlackHeuristics extends Heuristics {
                 /*
                         Check also if the blocking pawn is in the same board half of the king
                         otherwise it's useless
+                        Controlla anche se le righe/colonne sono già occupate, in tal caso non ci si mette
                      */
                 if (kingPosition(state)[0] < 4 && pos[0] < 4) {
                     if (pos[0] == 0 && countFreeColumn(state, pos) == 0)
