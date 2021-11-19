@@ -50,11 +50,11 @@ public class WhiteHeuristics extends Heuristics {
         //Positions which are the best moves at the beginning of the game
         weights.put(BEST_POSITIONS, 2.0);
         weights.put(BLACK_EATEN, 20.0);
-        weights.put(WHITE_ALIVE, 35.0);
+        weights.put(WHITE_ALIVE, 40.0);
         weights.put(NUM_ESCAPES_KING, 18.0);
         weights.put(BLACK_SURROUND_KING, 7.0);
         weights.put(PROTECTION_KING, 18.0);
-        weights.put(BLOCK_CITIZENS, 15.0);
+        weights.put(BLOCK_CITIZENS, 10.0);
 
         //Extraction of keys
         keys = new String[weights.size()];

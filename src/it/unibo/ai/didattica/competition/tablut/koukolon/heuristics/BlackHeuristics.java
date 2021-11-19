@@ -54,14 +54,14 @@ public class BlackHeuristics extends Heuristics {
         //Initializing weights
         weights = new HashMap<String, Double>();
         weights.put(BLACK_ALIVE, 35.0);
-        weights.put(WHITE_EATEN, 48.0);
-        weights.put(BLACK_SURROUND_KING, 15.0);
+        weights.put(WHITE_EATEN, 50.0);
+        weights.put(BLACK_SURROUND_KING, 20.0);
         /*
             TODO: Aggiungere modifica del peso rispetto al numero di turni
          */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
-        weights.put(BLOCK_FORK_POSITIONS, 15.0);
+        weights.put(BLOCK_FORK_POSITIONS, 7.0);
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -160,14 +160,27 @@ public class BlackHeuristics extends Heuristics {
                         Check also if the blocking pawn is in the same board half of the king
                         otherwise it's useless
                      */
-                if (kingPosition(state)[0] < 4 && pos[0] < 4)
-                    num++;
-                else if (kingPosition(state)[0] > 4 && pos[0] > 4)
-                    num++;
-                else if (kingPosition(state)[1] < 4 && pos[1] < 4)
-                    num++;
-                else if (kingPosition(state)[1] > 4 && pos[1] > 4)
-                    num++;
+                if (kingPosition(state)[0] < 4 && pos[0] < 4) {
+                    if (pos[0] == 0 && countFreeColumn(state, pos) == 0)
+                        num++;
+                    else if ((pos[1] == 0 || pos[1] == 8) && countFreeRow(state, pos) == 0)
+                        num++;
+                } else if (kingPosition(state)[0] > 4 && pos[0] > 4) {
+                    if (pos[0] == 8 && countFreeColumn(state, pos) == 0)
+                        num++;
+                    else if ((pos[1] == 0 || pos[1] == 8)  && countFreeRow(state, pos) == 0)
+                        num++;
+                } else if (kingPosition(state)[1] < 4 && pos[1] < 4) {
+                    if (pos[1] == 0 && countFreeRow(state, pos) == 0)
+                        num++;
+                    else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
+                        num++;
+                } else if (kingPosition(state)[1] > 4 && pos[1] > 4) {
+                    if (pos[1] == 8 && countFreeRow(state, pos) == 0)
+                        num++;
+                    else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
+                        num++;
+                }
             }
         }
 
