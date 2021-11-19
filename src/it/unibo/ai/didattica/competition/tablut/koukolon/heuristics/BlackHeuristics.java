@@ -13,6 +13,7 @@ public class BlackHeuristics extends Heuristics {
     private final String WHITE_EATEN = "numberOfWhiteEaten";
     private final String BLACK_ALIVE = "numberOfBlackAlive";
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
+    private final String BLACK_ON_WEAK_SIDE = "blackOnWeakSide";
 
     //Threshold used to decide whether to use rhombus configuration
     private final int THRESHOLD = 10;
@@ -34,6 +35,20 @@ public class BlackHeuristics extends Heuristics {
             {7, 2}, {7, 6}
     };
 
+    private final int[][][] rhombusByQuadrant = {
+            {{1, 2}, {2, 1}},
+            {{1, 6}, {2, 7}},
+            {{6, 1}, {7, 2}},
+            {{7, 6}, {6, 7}}
+    };
+
+    private final int[][][] blockPositionsByQuadrant = {
+            {{0, 2}, {2, 0}},
+            {{0, 6}, {2, 8}},
+            {{6, 0}, {8, 2}},
+            {{8, 6}, {6, 8}}
+    };
+
     /*
     private final int[][] rhombusNarrow = {
             {2, 3}, {3, 2}, {2, 5}, {5, 2}, {3, 6}, {6, 3}, {6, 5}, {5, 6}
@@ -44,6 +59,7 @@ public class BlackHeuristics extends Heuristics {
     };
 
     private final int NUMBER_BLOCK_FORK = 8;
+    private final int BLOCKS_PER_QUADRANT = 2;
 
     private double numberOfBlack;
     private double numberOfWhiteEaten;
@@ -54,14 +70,15 @@ public class BlackHeuristics extends Heuristics {
         //Initializing weights
         weights = new HashMap<String, Double>();
         weights.put(BLACK_ALIVE, 35.0);
-        weights.put(WHITE_EATEN, 50.0);
+        weights.put(WHITE_EATEN, 30.0);
         weights.put(BLACK_SURROUND_KING, 20.0);
         /*
             TODO: Aggiungere modifica del peso rispetto al numero di turni
          */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
-        weights.put(BLOCK_FORK_POSITIONS, 7.0);
+        //weights.put(BLOCK_FORK_POSITIONS, 7.0);
+        weights.put(BLACK_ON_WEAK_SIDE, 150.0);
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -83,12 +100,14 @@ public class BlackHeuristics extends Heuristics {
         double pawnsNearKing = (double) checkNearPawns(state, kingPosition(state), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         //double numberOfPawnsOnNarrowRhombus = (double) getNumberOnRhombus(rhombusNarrow) / NUM_TILES_ON_RHOMBUS;
-        double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
+        // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
+        double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W"));
 
         if (flag) {
             System.out.println("Number of wide rhombus: " + numberOfPawnsOnWideRhombus);
             //System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
-            System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
+            //System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
+            System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
             System.out.println("Number of pawns near to the king:" + pawnsNearKing);
             System.out.println("Number of white pawns eaten: " + numberOfWhiteEaten);
             System.out.println("Black pawns: " + numberOfBlack);
@@ -102,7 +121,8 @@ public class BlackHeuristics extends Heuristics {
         atomicUtilities.put(BLACK_SURROUND_KING, pawnsNearKing);
         atomicUtilities.put(WIDE_RHOMBUS_POSITIONS, numberOfPawnsOnWideRhombus);
         //atomicUtilities.put(NARROW_RHOMBUS_POSITIONS, numberOfPawnsOnNarrowRhombus);
-        atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
+        //atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
+        atomicUtilities.put(BLACK_ON_WEAK_SIDE, numberOfPawnsOnWeakSide);
 
         for (int i = 0; i < weights.size(); i++) {
             utilityValue += weights.get(keys[i]) * atomicUtilities.get(keys[i]);
@@ -183,6 +203,16 @@ public class BlackHeuristics extends Heuristics {
                         num++;
                 }
             }
+        }
+
+        return num;
+    }
+
+    private int getNumberOnBlockPositions(int quadrant) {
+        int num = 0;
+
+        for(int[] pos: blockPositionsByQuadrant[quadrant]) {
+            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
         }
 
         return num;
