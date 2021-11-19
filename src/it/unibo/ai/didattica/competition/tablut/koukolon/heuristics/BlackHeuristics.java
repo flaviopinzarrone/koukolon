@@ -71,14 +71,28 @@ public class BlackHeuristics extends Heuristics {
         weights = new HashMap<String, Double>();
         weights.put(BLACK_ALIVE, 35.0);
         weights.put(WHITE_EATEN, 30.0);
-        weights.put(BLACK_SURROUND_KING, 20.0);
+        weights.put(BLACK_SURROUND_KING, 50.0);
         /*
             TODO: Aggiungere modifica del peso rispetto al numero di turni
          */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         //weights.put(BLOCK_FORK_POSITIONS, 7.0);
-        weights.put(BLACK_ON_WEAK_SIDE, 150.0);
+        weights.put(BLACK_ON_WEAK_SIDE, 50.0);
+
+        /*
+            TODO: EURISTICHE NERE
+            TODO: Il nero prima deve coprire le block position dei lati deboli, poi le block position rimanenti
+            TODO: successivamente deve stringere e passare da block position al rombo largo
+            TODO: Nella fase di collocamento al nero NON SERVE mangiare, è molto più importante prendere posizione correttamente
+            TODO: Una volta presa posizione il nero deve usare le pedine che non sono in difesa per attaccare (NON QUELLE SUI ROMBI)
+            TODO: una strategia efficace è cercare di ridurre i gradi di libertà del re, una volta mangiati tutti gli altri bianchi
+         */
+        /*
+            TODO: EURISTICHE BIANCHE
+            TODO: Il bianco deve impedire di prendere le posizioni tattiche, andando a metteresi dietro le diagonali prima che siano chiuse
+            TODO: Se vengono chiuse tutte le diagonali il bianco deve cambiare strategia e puntare in ogni modo al pareggio
+         */
 
         //Extraction of keys
         keys = new String[weights.size()];

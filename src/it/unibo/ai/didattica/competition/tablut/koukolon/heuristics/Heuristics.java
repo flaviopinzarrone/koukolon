@@ -384,17 +384,17 @@ public abstract class Heuristics {
 
     public int getMostOpenQuadrant(String target) {
         int bestCross = -1;
-        int max = Integer.MIN_VALUE;
+        int min = Integer.MAX_VALUE;
         for(int i = 0; i < 4; i++) {
             int pawnsOnCross = getPawnsOnCross(i, target);
-            if(pawnsOnCross > max) {
+            if(pawnsOnCross < min) {
                 bestCross = i;
-                max = pawnsOnCross;
+                min = pawnsOnCross;
             }
         }
         int q1 = bestCross;
         int q2 = (bestCross < 3) ? bestCross + 1 : 0;
-        return (getPawnsOnQuadrant(q1, target) >= getPawnsOnQuadrant(q2, target)) ? q1 : q2;
+        return (getPawnsOnQuadrant(q1, target) <= getPawnsOnQuadrant(q2, target)) ? q1 : q2;
 
     }
 }
