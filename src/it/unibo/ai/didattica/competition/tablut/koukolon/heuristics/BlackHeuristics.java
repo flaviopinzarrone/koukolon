@@ -34,11 +34,12 @@ public class BlackHeuristics extends Heuristics {
             {7, 2}, {7, 6}
     };
 
+    /*
     private final int[][] rhombusNarrow = {
             {2, 3}, {3, 2}, {2, 5}, {5, 2}, {3, 6}, {6, 3}, {6, 5}, {5, 6}
     };
-
-    private final int[][] blockFork = {
+    */
+    private final int[][] blockPositions = {
             {0, 2}, {0, 6}, {2, 0}, {6, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
     };
 
@@ -59,8 +60,8 @@ public class BlackHeuristics extends Heuristics {
             TODO: Aggiungere modifica del peso rispetto al numero di turni
          */
         weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
-        weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
-        weights.put(BLOCK_FORK_POSITIONS, 30.0);
+        //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
+        weights.put(BLOCK_FORK_POSITIONS, 15.0);
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -81,12 +82,12 @@ public class BlackHeuristics extends Heuristics {
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(state, kingPosition(state), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
-        double numberOfPawnsOnNarrowRhombus = (double) getNumberOnRhombus(rhombusNarrow) / NUM_TILES_ON_RHOMBUS;
-        double numberOfPawnsBlocking = (double) getValuesOnSpecialCells(blockFork) / NUMBER_BLOCK_FORK;
+        //double numberOfPawnsOnNarrowRhombus = (double) getNumberOnRhombus(rhombusNarrow) / NUM_TILES_ON_RHOMBUS;
+        double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
 
         if (flag) {
             System.out.println("Number of wide rhombus: " + numberOfPawnsOnWideRhombus);
-            System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
+            //System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
             System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
             System.out.println("Number of pawns near to the king:" + pawnsNearKing);
             System.out.println("Number of white pawns eaten: " + numberOfWhiteEaten);
@@ -100,7 +101,7 @@ public class BlackHeuristics extends Heuristics {
         atomicUtilities.put(WHITE_EATEN, numberOfWhiteEaten);
         atomicUtilities.put(BLACK_SURROUND_KING, pawnsNearKing);
         atomicUtilities.put(WIDE_RHOMBUS_POSITIONS, numberOfPawnsOnWideRhombus);
-        atomicUtilities.put(NARROW_RHOMBUS_POSITIONS, numberOfPawnsOnNarrowRhombus);
+        //atomicUtilities.put(NARROW_RHOMBUS_POSITIONS, numberOfPawnsOnNarrowRhombus);
         atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
 
         for (int i = 0; i < weights.size(); i++) {
@@ -144,6 +145,33 @@ public class BlackHeuristics extends Heuristics {
         }
         return count;
 
+    }
+
+    /**
+     * @return number of white pawns on blocking positions
+     */
+    private int getNumberOnBlockPositions() {
+
+        int num = 0;
+
+        for (int[] pos : blockPositions) {
+            if (state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) {
+                /*
+                        Check also if the blocking pawn is in the same board half of the king
+                        otherwise it's useless
+                     */
+                if (kingPosition(state)[0] < 4 && pos[0] < 4)
+                    num++;
+                else if (kingPosition(state)[0] > 4 && pos[0] > 4)
+                    num++;
+                else if (kingPosition(state)[1] < 4 && pos[1] < 4)
+                    num++;
+                else if (kingPosition(state)[1] > 4 && pos[1] > 4)
+                    num++;
+            }
+        }
+
+        return num;
     }
 
 }
