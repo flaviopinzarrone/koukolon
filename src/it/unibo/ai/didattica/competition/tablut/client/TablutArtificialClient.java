@@ -189,9 +189,7 @@ public class TablutArtificialClient extends TablutClient {
                     } catch (ClassNotFoundException | IOException e) {
                         e.printStackTrace();
                     }
-                    System.out.println("Pawns on Quad " + getPawnsOnQuadrant(0,"W"));
-                    System.out.println("Pawns on Cross " + getPawnsOnCross(0,"W"));
-                    System.out.println("Most open quad " + getMostOpenQuadrant("W"));
+
                 }
 
                 // if is turn of oppenent (WHITE)
@@ -234,65 +232,5 @@ public class TablutArtificialClient extends TablutClient {
         return search.makeDecision(state);
     }
 
-    /*
-        Funzioni fatte da Fra.
-     */
 
-    private int getPawnsOnQuadrant(int quadrant, String target) {
-        int count = 0;
-        int row_start = (quadrant / 2) * 5;
-        int column_start = (quadrant % 2) * 5;
-        State.Pawn[][] board = getCurrentState().getBoard();
-
-        for(int i = row_start; i < row_start + 3; i++) {
-            for(int j = column_start; j < column_start + 3; j++) {
-                State.Pawn pawn = board[i][j];
-                if(pawn.equalsPawn(target) || (target.equalsIgnoreCase("W") && pawn.equalsPawn("K"))) count++;
-            }
-        }
-        return count;
-    }
-
-    private int crosses[][][] = {
-            {{2, 4}, {3, 4}}, // vertical upper
-            {{4, 5}, {4, 6}}, // horizontal right
-            {{5, 4}, {6, 4}}, // vertical lower
-            {{4, 2}, {4, 3}} // horizontal left
-    };
-
-    private int getPawnsOnCross(int cross_number, String target) {
-        int result = 0;
-        int cross[][] = crosses[cross_number];
-        State.Pawn[][] board = getCurrentState().getBoard();
-
-        for(int[] row: cross) {
-            State.Pawn pawn = board[row[0]][row[1]];
-            if(pawn.equalsPawn(target) || (target.equalsIgnoreCase("W") && pawn.equalsPawn("K"))) result++;
-        }
-
-        return result;
-    }
-
-    public int getMostOpenQuadrant(String target) {
-        int bestCross = -1;
-        int max = Integer.MIN_VALUE;
-        for(int i = 0; i < 4; i++) {
-            int pawnsOnCross = getPawnsOnCross(i, target);
-            if(pawnsOnCross > max) {
-                bestCross = i;
-                max = pawnsOnCross;
-            }
-        }
-        int bestQuadrant = -1;
-        max = Integer.MIN_VALUE;
-        for(int i = bestCross; i <= (bestCross+1)/4; i++) {
-            int pawnsOnQuadrant = getPawnsOnQuadrant(i, target);
-            if(pawnsOnQuadrant > max) {
-                bestQuadrant = i;
-                max = pawnsOnQuadrant;
-            }
-        }
-
-        return bestQuadrant;
-    }
 }
