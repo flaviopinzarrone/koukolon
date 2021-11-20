@@ -14,6 +14,8 @@ public class BlackHeuristics extends Heuristics {
     private final String BLACK_ALIVE = "numberOfBlackAlive";
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
     private final String BLACK_ON_WEAK_SIDE = "blackOnWeakSide";
+    private final String WEAK_RHOMBUS_POSITIONS = "weakRhombusPositions";
+
 
     //Threshold used to decide whether to use rhombus configuration
     private final int THRESHOLD = 10;
@@ -35,6 +37,11 @@ public class BlackHeuristics extends Heuristics {
             {7, 2}, {7, 6}
     };
 
+    /*
+    First index: quadrant
+    Second index: point in quadrant
+    Third index: coordinate in point
+    */
     private final int[][][] rhombusByQuadrant = {
             {{1, 2}, {2, 1}},
             {{1, 6}, {2, 7}},
@@ -42,6 +49,11 @@ public class BlackHeuristics extends Heuristics {
             {{7, 6}, {6, 7}}
     };
 
+    /*
+    First index: quadrant
+    Second index: point in quadrant
+    Third index: coordinate in point
+     */
     private final int[][][] blockPositionsByQuadrant = {
             {{0, 2}, {2, 0}},
             {{0, 6}, {2, 8}},
@@ -75,14 +87,16 @@ public class BlackHeuristics extends Heuristics {
         /*
             TODO: Aggiungere modifica del peso rispetto al numero di turni
          */
-        weights.put(WIDE_RHOMBUS_POSITIONS, 2.0);
+        weights.put(WEAK_RHOMBUS_POSITIONS, 15.0);
+        weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
-        //weights.put(BLOCK_FORK_POSITIONS, 7.0);
-        weights.put(BLACK_ON_WEAK_SIDE, 50.0);
+        // weights.put(BLOCK_FORK_POSITIONS, 10.0);
+        // weights.put(BLACK_ON_WEAK_SIDE, 25.0);
 
         /*
             TODO: EURISTICHE NERE
             TODO: Il nero prima deve coprire le block position dei lati deboli, poi le block position rimanenti
+            TODO: se ti può mangiare nella block poisition passa al rombo
             TODO: successivamente deve stringere e passare da block position al rombo largo
             TODO: Nella fase di collocamento al nero NON SERVE mangiare, è molto più importante prendere posizione correttamente
             TODO: Una volta presa posizione il nero deve usare le pedine che non sono in difesa per attaccare (NON QUELLE SUI ROMBI)
@@ -92,6 +106,9 @@ public class BlackHeuristics extends Heuristics {
             TODO: EURISTICHE BIANCHE
             TODO: Il bianco deve impedire di prendere le posizioni tattiche, andando a metteresi dietro le diagonali prima che siano chiuse
             TODO: Se vengono chiuse tutte le diagonali il bianco deve cambiare strategia e puntare in ogni modo al pareggio
+         */
+        /*
+            TODO: AGGIUNGERE PAREGGIO
          */
 
         //Extraction of keys
@@ -105,6 +122,7 @@ public class BlackHeuristics extends Heuristics {
      */
     @Override
     public double evaluateState() {
+        if(state.getTurn().equalsTurn("D")) return -1e6;
 
         double utilityValue = 0.0;
 
@@ -112,16 +130,16 @@ public class BlackHeuristics extends Heuristics {
         numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(state, kingPosition(state), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
+        double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
-        //double numberOfPawnsOnNarrowRhombus = (double) getNumberOnRhombus(rhombusNarrow) / NUM_TILES_ON_RHOMBUS;
         // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
-        double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W"));
+        // double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
 
         if (flag) {
-            System.out.println("Number of wide rhombus: " + numberOfPawnsOnWideRhombus);
+            System.out.println("Number of wide rhombus: " + numberOfPawnsOnWeakRhombus);
             //System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
             //System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
-            System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
+            //System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
             System.out.println("Number of pawns near to the king:" + pawnsNearKing);
             System.out.println("Number of white pawns eaten: " + numberOfWhiteEaten);
             System.out.println("Black pawns: " + numberOfBlack);
@@ -133,10 +151,10 @@ public class BlackHeuristics extends Heuristics {
         atomicUtilities.put(BLACK_ALIVE, numberOfBlack);
         atomicUtilities.put(WHITE_EATEN, numberOfWhiteEaten);
         atomicUtilities.put(BLACK_SURROUND_KING, pawnsNearKing);
+        atomicUtilities.put(WEAK_RHOMBUS_POSITIONS, numberOfPawnsOnWeakRhombus);
         atomicUtilities.put(WIDE_RHOMBUS_POSITIONS, numberOfPawnsOnWideRhombus);
-        //atomicUtilities.put(NARROW_RHOMBUS_POSITIONS, numberOfPawnsOnNarrowRhombus);
-        //atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
-        atomicUtilities.put(BLACK_ON_WEAK_SIDE, numberOfPawnsOnWeakSide);
+        // atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
+        // atomicUtilities.put(BLACK_ON_WEAK_SIDE, numberOfPawnsOnWeakSide);
 
         for (int i = 0; i < weights.size(); i++) {
             utilityValue += weights.get(keys[i]) * atomicUtilities.get(keys[i]);
@@ -164,6 +182,16 @@ public class BlackHeuristics extends Heuristics {
         } else {
             return 0;
         }
+    }
+
+    public int getNumberOnRhombus(int quadrant) {
+        int num = 0;
+
+        for(int[] pos: rhombusByQuadrant[quadrant]) {
+            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
+        }
+
+        return num;
     }
 
     /**

@@ -105,6 +105,7 @@ public class TablutHumanClient extends TablutClient {
 						System.out.println("Neri in protezione nel quadrante " + i + ": " + getNumberOnBlockPositions(i));
 						System.out.println("Bianchi nella cross " + i + ": " + getPawnsOnCross(i, "W"));
 					}
+
 					System.out.println("Miglior quadrante: " + getMostOpenQuadrant("W"));
 
 
