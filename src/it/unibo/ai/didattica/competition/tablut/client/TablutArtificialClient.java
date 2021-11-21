@@ -4,8 +4,11 @@ package it.unibo.ai.didattica.competition.tablut.client;
 import it.unibo.ai.didattica.competition.tablut.koukolon.minmax.MyIterativeDeepeningAlphaBetaSearch;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 
 public class TablutArtificialClient extends TablutClient {
 
@@ -112,10 +115,25 @@ public class TablutArtificialClient extends TablutClient {
         System.out.println("Server: " + this.serverIp);
         System.out.println("Debug mode: " + this.debug+"\n");
 
-
+        try {
+            ArrayList<State> list = new ArrayList<State>();
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/home/enrico/IdeaProjects/koukolon/Executables/games_savings/game.dat"));
+            out.writeObject(list);
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         // still alive until you are playing
         while (true) {
 
+            try {
+//                System.out.println("Salvo lo stato-------------------------------------------------");
+//                System.out.println(state.getBoard());
+//                System.out.println("---------------------------------------------------------------");
+                state.saveState();
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println(e.getMessage());
+            }
             // update the current state from the server
             try {
                 this.read();
@@ -158,16 +176,40 @@ public class TablutArtificialClient extends TablutClient {
                 // if I WIN
                 else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
                     System.out.println("YOU WIN!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
                 // if I LOSE
                 else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
                     System.out.println("YOU LOSE!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
                 // if DRAW
                 else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
                     System.out.println("DRAW!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
 
@@ -200,18 +242,42 @@ public class TablutArtificialClient extends TablutClient {
                 // if I LOSE
                 else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
                     System.out.println("YOU LOSE!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
 
                 // if I WIN
                 else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
                     System.out.println("YOU WIN!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
 
                 // if DRAW
                 else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
                     System.out.println("DRAW!");
+                    try {
+//                        System.out.println("Salvo lo stato-------------------------------------------------");
+//                        System.out.println(state.getBoard());
+//                        System.out.println("---------------------------------------------------------------");
+                        state.saveState();
+                    } catch (IOException | ClassNotFoundException e) {
+                        System.err.println(e.getMessage());
+                    }
                     System.exit(0);
                 }
             }
