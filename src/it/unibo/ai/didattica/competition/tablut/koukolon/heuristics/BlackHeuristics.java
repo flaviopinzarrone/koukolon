@@ -130,8 +130,10 @@ public class BlackHeuristics extends Heuristics {
         numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(state, kingPosition(state), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
-        double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
-        double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
+        double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("W", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
+        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("w", getWideRhombus()) / NUM_TILES_ON_RHOMBUS;
+        // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
+        // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
         // double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
 
@@ -175,24 +177,24 @@ public class BlackHeuristics extends Heuristics {
      * @param rhombus
      * @return number of black pawns on tiles if condition is true, 0 otherwise
      */
-    public int getNumberOnRhombus(int[][] rhombus) {
-
-        if (state.getNumberOf(State.Pawn.BLACK) >= THRESHOLD) {
-            return getValuesOnSpecialCells(rhombus);
-        } else {
-            return 0;
-        }
-    }
-
-    public int getNumberOnRhombus(int quadrant) {
-        int num = 0;
-
-        for(int[] pos: rhombusByQuadrant[quadrant]) {
-            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
-        }
-
-        return num;
-    }
+//    public int getNumberOnRhombus(int[][] rhombus) {
+//
+//        if (state.getNumberOf(State.Pawn.BLACK) >= THRESHOLD) {
+//            return getValuesOnSpecialCells(rhombus);
+//        } else {
+//            return 0;
+//        }
+//    }
+//
+//    public int getNumberOnRhombus(int quadrant) {
+//        int num = 0;
+//
+//        for(int[] pos: rhombusByQuadrant[quadrant]) {
+//            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
+//        }
+//
+//        return num;
+//    }
 
     /**
      * @return number of black pawns on special cell configuration
@@ -250,14 +252,44 @@ public class BlackHeuristics extends Heuristics {
         return num;
     }
 
-    private int getNumberOnBlockPositions(int quadrant) {
-        int num = 0;
-
-        for(int[] pos: blockPositionsByQuadrant[quadrant]) {
-            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
+    /**
+     *
+     * @return the most open quadrant, according to this logic:
+     */
+    public int getMostOpenQuadrant() {
+        int bestCross = -1;
+        int min = Integer.MAX_VALUE;
+        for(int i = 0; i < 4; i++) {
+            int pawnsOnCross = getPawnsOnPosition("W", getCrosses(), i);
+            if(pawnsOnCross < min) {
+                bestCross = i;
+                min = pawnsOnCross;
+            }
         }
+        int q1 = bestCross;
+        int q2 = (bestCross < 3) ? bestCross + 1 : 0;
 
-        return num;
+        return(getPawnsOnPosition("W", getQuadrants(), q1) <= getPawnsOnPosition("W", getQuadrants(), q2) ? q1 : q2);
+    }
+
+//    private int getNumberOnBlockPositions(int quadrant) {
+//        int num = 0;
+//
+//        for(int[] pos: blockPositionsByQuadrant[quadrant]) {
+//            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
+//        }
+//
+//        return num;
+//    }
+
+    /**
+     *
+     * @return the quadrant to defende, according to this logic:
+     * if the king is
+     */
+    public int getQuadrantToDefend() {
+        // TODO: fill body
+        return -1;
     }
 
 }

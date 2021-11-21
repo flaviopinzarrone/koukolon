@@ -72,7 +72,7 @@ public class WhiteHeuristics extends Heuristics {
         weights.put(PROTECTION_KING, 18.0);
         // Sost 10 -> 15
         weights.put(BLOCK_CITIZENS, 15.0);
-        weights.put(ANGLE_POSITIONS, 15.0);
+        // weights.put(ANGLE_POSITIONS, 15.0);
 
 
         //Extraction of keys
@@ -259,5 +259,23 @@ public class WhiteHeuristics extends Heuristics {
 
         }
         return result;
+    }
+
+
+
+
+    /**
+     *
+     * @return the quadrant to block if exists, else -1
+     */
+    private int getQuadrantToBlock() {
+
+        for(int i = 0; i < 4; i++) {
+            if(getPawnsOnPosition("B", getNarrowRhombus()) == 1 && getPawnsOnPosition("W", getBehindNarrowRhombus()) == 0) {
+                return i;
+            }
+        }
+
+        return -1;
     }
 }
