@@ -16,19 +16,35 @@ public class WhiteHeuristics extends Heuristics {
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
     private final String PROTECTION_KING = "protectionKing";
     private final String BLOCK_CITIZENS = "blockingCitizens";
-
+    private final String ANGLE_POSITIONS = "anglePositions";
 
     //Threshold used to decide whether to use best positions configuration
     private final static int THRESHOLD_BEST = 2;
 
     //Matrix of favourite white positions in the initial stages of the game
     private final static int[][] bestPositions = {
+            /*
             {2,3},  {3,5},
             {5,3},  {6,5}
+            */
+            //Provando aperture diverse
+            {2,1},  {2,7},
+            {6,1},  {6,7}
+
     };
 
     private final static int[][] blockPositions = {
-            {0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
+            //{0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
+            //Provando posizioni diverse
+            {5, 1}, {5, 7}, {3, 1}, {3, 7},
+            {1, 3}, {7, 3}, {1, 5}, {7, 5}
+    };
+
+
+    private final static int[][] anglePositions = {
+            //Angoli
+            {1,1}, {1,7},
+            {7,1}, {7,7}
     };
 
     private final static int NUM_BEST_POSITION = bestPositions.length;
@@ -54,7 +70,10 @@ public class WhiteHeuristics extends Heuristics {
         weights.put(NUM_ESCAPES_KING, 18.0);
         weights.put(BLACK_SURROUND_KING, 7.0);
         weights.put(PROTECTION_KING, 18.0);
-        weights.put(BLOCK_CITIZENS, 10.0);
+        // Sost 10 -> 15
+        weights.put(BLOCK_CITIZENS, 15.0);
+        weights.put(ANGLE_POSITIONS, 15.0);
+
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -96,6 +115,7 @@ public class WhiteHeuristics extends Heuristics {
         values.put(BLACK_SURROUND_KING,blackSurroundKing);
         values.put(PROTECTION_KING,protectionKing);
         values.put(BLOCK_CITIZENS, blockPositions);
+        //values.put(ANGLE_POSITIONS, anglePositions);
 
 
         for (int i=0; i < weights.size(); i++){
