@@ -70,7 +70,7 @@ public class BlackHeuristics extends Heuristics {
      */
     @Override
     public double evaluateState() {
-        if(state.getTurn().equalsTurn("D")) return -1e6;
+        if(this.state.getTurn().equalsTurn("D")) return -1e6;
 
         double utilityValue = 0.0;
 
@@ -78,7 +78,7 @@ public class BlackHeuristics extends Heuristics {
         numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(state, getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
-        double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("W", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
+        double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("B", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
         double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("w", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
@@ -259,7 +259,7 @@ public class BlackHeuristics extends Heuristics {
                 }
             }
         }
-        return -1;
+        return result;
     }
 
     /**
