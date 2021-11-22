@@ -244,10 +244,11 @@ public abstract class Heuristics {
         return state.getPawn(4, 4).equalsPawn("K");
     }
 
+
     /**
      * @return the number of near pawns that are target(BLACK or WHITE)
      */
-    public int checkNearPawns(State state, int[] position, String target) {
+    public int checkNearPawns(int[] position, String target) {
         int count = 0;
         //GET TURN
         State.Pawn[][] board = state.getBoard();
@@ -297,8 +298,8 @@ public abstract class Heuristics {
     /**
      * @return true if king is near, false otherwise
      */
-    protected boolean checkNearKing(State state, int[] position) {
-        return checkNearPawns(state, position, "K") > 0;
+    protected boolean hasKingAdjacentPawns(int[] position) {
+        return checkNearPawns(position, "K") > 0;
     }
 
     /**

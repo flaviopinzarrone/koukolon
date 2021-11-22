@@ -46,11 +46,11 @@ public class BlackHeuristics extends Heuristics {
         super(state);
         //Initializing weights
         weights = new HashMap<String, Double>();
-        weights.put(BLACK_ALIVE, 35.0);
-        weights.put(WHITE_EATEN, 30.0);
+        weights.put(BLACK_ALIVE, 30.0);
+        weights.put(WHITE_EATEN, 35.0);
         weights.put(BLACK_SURROUND_KING, 25.0);
         weights.put(WEAK_RHOMBUS_POSITIONS, 15.0);
-        weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
+        weights.put(WIDE_RHOMBUS_POSITIONS, 0.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         // weights.put(BLOCK_FORK_POSITIONS, 10.0);
         // weights.put(BLACK_ON_WEAK_SIDE, 25.0);
@@ -77,7 +77,7 @@ public class BlackHeuristics extends Heuristics {
         //Atomic functions to combine to get utility value through the weighted sum
         numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
-        double pawnsNearKing = (double) checkNearPawns(state, getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
+        double pawnsNearKing = (double) checkNearPawns(getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("B", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
         double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("B", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;

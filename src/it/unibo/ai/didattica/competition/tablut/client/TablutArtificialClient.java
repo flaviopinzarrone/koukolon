@@ -117,7 +117,9 @@ public class TablutArtificialClient extends TablutClient {
 
         try {
             ArrayList<State> list = new ArrayList<State>();
-            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("/home/pinzers/IdeaProjects/koukolon/Executables/games_savings/game.dat"));
+            String home = System.getenv("HOME");
+            String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
+            ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
             out.writeObject(list);
             out.close();
         } catch (IOException e) {

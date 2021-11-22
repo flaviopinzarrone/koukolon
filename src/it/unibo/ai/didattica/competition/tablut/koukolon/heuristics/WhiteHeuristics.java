@@ -97,7 +97,7 @@ public class WhiteHeuristics extends Heuristics {
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK))
                 / GameAshtonTablut.NUM_BLACK;
-        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(state, getKingPosition(),
+        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(getKingPosition(),
                 State.Turn.BLACK.toString())) / getNumEatingPositions(state);
         double protectionKing = protectionKing();
         double blockPositions = (double) getNumberOnBlockPositions() / NUM_BLOCK_POSITION;
@@ -263,7 +263,7 @@ public class WhiteHeuristics extends Heuristics {
                     contributionPerN = otherPoints / 3;
                 }
 
-                result += contributionPerN * checkNearPawns(state, targetPosition,State.Pawn.WHITE.toString());
+                result += contributionPerN * checkNearPawns(targetPosition,State.Pawn.WHITE.toString());
             }
 
         }
