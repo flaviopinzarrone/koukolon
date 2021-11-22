@@ -46,11 +46,11 @@ public class BlackHeuristics extends Heuristics {
         super(state);
         //Initializing weights
         weights = new HashMap<String, Double>();
-        weights.put(BLACK_ALIVE, 30.0);
-        weights.put(WHITE_EATEN, 35.0);
+        weights.put(BLACK_ALIVE, 35.0);
+        weights.put(WHITE_EATEN, 30.0);
         weights.put(BLACK_SURROUND_KING, 25.0);
         weights.put(WEAK_RHOMBUS_POSITIONS, 15.0);
-        weights.put(WIDE_RHOMBUS_POSITIONS, 0.0);
+        weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         // weights.put(BLOCK_FORK_POSITIONS, 10.0);
         // weights.put(BLACK_ON_WEAK_SIDE, 25.0);
@@ -79,14 +79,14 @@ public class BlackHeuristics extends Heuristics {
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("B", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
-        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("B", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
+        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("W", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
         // double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
 
         if (flag) {
-            System.out.println("Number of wide rhombus: " + numberOfPawnsOnWeakRhombus);
+            // System.out.println("Number of wide rhombus: " + numberOfPawnsOnWeakRhombus);
             //System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
             //System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
             //System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
