@@ -48,7 +48,7 @@ public class BlackHeuristics extends Heuristics {
         weights = new HashMap<String, Double>();
         weights.put(BLACK_ALIVE, 35.0);
         weights.put(WHITE_EATEN, 30.0);
-        weights.put(BLACK_SURROUND_KING, 50.0);
+        weights.put(BLACK_SURROUND_KING, 25.0);
         weights.put(WEAK_RHOMBUS_POSITIONS, 15.0);
         weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
@@ -79,7 +79,7 @@ public class BlackHeuristics extends Heuristics {
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double pawnsNearKing = (double) checkNearPawns(state, getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("B", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
-        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("w", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
+        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("B", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
@@ -277,9 +277,12 @@ public class BlackHeuristics extends Heuristics {
     /**
      *
      * @param quadrant: quadrant to analyze
-     * @return the best position to assume in a particular quadrant
+     * @return the best position to assume in a particular quadrant, according to this logic:
+     * if the quadrant is empty the best defense is narrow rhombus
+     *
+     *
      */
-    public int[][] getBestDefense(int quadrant) {
+    public int[][][] getBestDefense(int quadrant) {
         // TODO: fill body
         return null;
     }
