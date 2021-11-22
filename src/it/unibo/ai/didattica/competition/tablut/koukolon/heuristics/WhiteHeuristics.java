@@ -21,6 +21,7 @@ public class WhiteHeuristics extends Heuristics {
     //Threshold used to decide whether to use best positions configuration
     private final static int THRESHOLD_BEST = 2;
 
+    // TODO: refactor following black heuristics pattern
     //Matrix of favourite white positions in the initial stages of the game
     private final static int[][] bestPositions = {
             /*
@@ -33,6 +34,7 @@ public class WhiteHeuristics extends Heuristics {
 
     };
 
+    // TODO: refactor following black heuristics pattern
     private final static int[][] blockPositions = {
             //{0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
             //Provando posizioni diverse
@@ -40,7 +42,7 @@ public class WhiteHeuristics extends Heuristics {
             {1, 3}, {7, 3}, {1, 5}, {7, 5}
     };
 
-
+    // TODO: refactor following black heuristics pattern
     private final static int[][] anglePositions = {
             //Angoli
             {1,1}, {1,7},
@@ -91,8 +93,10 @@ public class WhiteHeuristics extends Heuristics {
         //Atomic functions to combine to get utility value through the weighted sum
         double bestPositions = (double) getNumberOnBestPositions() / NUM_BEST_POSITION;
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
-        double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK)) / GameAshtonTablut.NUM_BLACK;
-        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(state, kingPosition(state),State.Turn.BLACK.toString())) / getNumEatingPositions(state);
+        double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK))
+                / GameAshtonTablut.NUM_BLACK;
+        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(state, getKingPosition(),
+                State.Turn.BLACK.toString())) / getNumEatingPositions(state);
         double protectionKing = protectionKing();
         double blockPositions = (double) getNumberOnBlockPositions() / NUM_BLOCK_POSITION;
 
@@ -129,6 +133,7 @@ public class WhiteHeuristics extends Heuristics {
         return utilityValue;
     }
 
+    // TODO: may probably be deleted in favor of more general function
     /**
      * @return number of white pawns on blocking positions
      */
@@ -143,13 +148,13 @@ public class WhiteHeuristics extends Heuristics {
                         Check also if the blocking pawn is in the same board half of the king
                         otherwise it's useless
                      */
-                    if (kingPosition(state)[0] < 4 && pos[0] < 4)
+                    if (getKingPosition()[0] < 4 && pos[0] < 4)
                         num++;
-                    else if (kingPosition(state)[0] > 4 && pos[0] > 4)
+                    else if (getKingPosition()[0] > 4 && pos[0] > 4)
                         num++;
-                    else if (kingPosition(state)[1] < 4 && pos[1] < 4)
+                    else if (getKingPosition()[1] < 4 && pos[1] < 4)
                         num++;
-                    else if (kingPosition(state)[1] > 4 && pos[1] > 4)
+                    else if (getKingPosition()[1] > 4 && pos[1] > 4)
                         num++;
                 }
             }
@@ -158,6 +163,7 @@ public class WhiteHeuristics extends Heuristics {
         return num;
     }
 
+    // TODO: may probably be deleted in favor of more general function
     /**
      *
      * @return number of white pawns on best positions
@@ -177,6 +183,7 @@ public class WhiteHeuristics extends Heuristics {
         return num;
     }
 
+    // TODO: refactor, there are nested weights and code sucks
     /***
      *
      * @return value according to the protection level of the king whether an enemy pawn is next to it
@@ -189,7 +196,7 @@ public class WhiteHeuristics extends Heuristics {
 
         double result = 0.0;
 
-        int[] kingPos = kingPosition(state);
+        int[] kingPos = getKingPosition();
         //Pawns near to the king
         ArrayList<int[]> pawnsPositions = (ArrayList<int[]>) positionNearPawns(state,kingPos,State.Pawn.BLACK.toString());
 

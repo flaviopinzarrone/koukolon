@@ -19,8 +19,10 @@ public class BlackHeuristics extends Heuristics {
 
     //Threshold used to decide whether to use rhombus configuration
     private final int THRESHOLD = 10;
+    private final int PAWNS_ON_SINGLE_DEFENSE = 2;
+    private final int PAWNS_ON_SINGLE_EXTREME_DEFENSE = 4;
     //Number of tiles on rhombus
-    private final int NUM_TILES_ON_RHOMBUS = 8;
+    private final int PAWNS_ON_TOTAL_DEFENSE = 8;
 
     private final Map<String, Double> weights;
     private String[] keys;
@@ -28,44 +30,7 @@ public class BlackHeuristics extends Heuristics {
     //Flag to enable console print
     private boolean flag = false;
 
-    //Matrix of favourite black positions in initial stages and to block the escape ways
-    private final int[][] rhombusWide = {
-            {1, 2}, {1, 6},
-            {2, 1}, {2, 7},
-
-            {6, 1}, {6, 7},
-            {7, 2}, {7, 6}
-    };
-
-    /*
-    First index: quadrant
-    Second index: point in quadrant
-    Third index: coordinate in point
-    */
-    private final int[][][] rhombusByQuadrant = {
-            {{1, 2}, {2, 1}},
-            {{1, 6}, {2, 7}},
-            {{6, 1}, {7, 2}},
-            {{7, 6}, {6, 7}}
-    };
-
-    /*
-    First index: quadrant
-    Second index: point in quadrant
-    Third index: coordinate in point
-     */
-    private final int[][][] blockPositionsByQuadrant = {
-            {{0, 2}, {2, 0}},
-            {{0, 6}, {2, 8}},
-            {{6, 0}, {8, 2}},
-            {{8, 6}, {6, 8}}
-    };
-
-    /*
-    private final int[][] rhombusNarrow = {
-            {2, 3}, {3, 2}, {2, 5}, {5, 2}, {3, 6}, {6, 3}, {6, 5}, {5, 6}
-    };
-    */
+    // TODO: this variable is only used in function to be refactored
     private final int[][] blockPositions = {
             {0, 2}, {0, 6}, {2, 0}, {6, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
     };
@@ -84,32 +49,14 @@ public class BlackHeuristics extends Heuristics {
         weights.put(BLACK_ALIVE, 35.0);
         weights.put(WHITE_EATEN, 30.0);
         weights.put(BLACK_SURROUND_KING, 50.0);
-        /*
-            TODO: Aggiungere modifica del peso rispetto al numero di turni
-         */
         weights.put(WEAK_RHOMBUS_POSITIONS, 15.0);
         weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         //weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         // weights.put(BLOCK_FORK_POSITIONS, 10.0);
         // weights.put(BLACK_ON_WEAK_SIDE, 25.0);
 
-        /*
-            TODO: EURISTICHE NERE
-            TODO: Il nero prima deve coprire le block position dei lati deboli, poi le block position rimanenti
-            TODO: se ti può mangiare nella block poisition passa al rombo
-            TODO: successivamente deve stringere e passare da block position al rombo largo
-            TODO: Nella fase di collocamento al nero NON SERVE mangiare, è molto più importante prendere posizione correttamente
-            TODO: Una volta presa posizione il nero deve usare le pedine che non sono in difesa per attaccare (NON QUELLE SUI ROMBI)
-            TODO: una strategia efficace è cercare di ridurre i gradi di libertà del re, una volta mangiati tutti gli altri bianchi
-         */
-        /*
-            TODO: EURISTICHE BIANCHE
-            TODO: Il bianco deve impedire di prendere le posizioni tattiche, andando a metteresi dietro le diagonali prima che siano chiuse
-            TODO: Se vengono chiuse tutte le diagonali il bianco deve cambiare strategia e puntare in ogni modo al pareggio
-         */
-        /*
-            TODO: AGGIUNGERE PAREGGIO
-         */
+        // TODO: complete refactoring of Heuristics classes
+        // TODO: change weights according to quadrants to defend
 
         //Extraction of keys
         keys = new String[weights.size()];
@@ -117,6 +64,7 @@ public class BlackHeuristics extends Heuristics {
 
     }
 
+    // TODO: refactor
     /**
      * @return the evaluation of the states using a weighted sum
      */
@@ -129,9 +77,9 @@ public class BlackHeuristics extends Heuristics {
         //Atomic functions to combine to get utility value through the weighted sum
         numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
         numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
-        double pawnsNearKing = (double) checkNearPawns(state, kingPosition(state), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
+        double pawnsNearKing = (double) checkNearPawns(state, getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
         double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("W", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
-        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("w", getWideRhombus()) / NUM_TILES_ON_RHOMBUS;
+        double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("w", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
         // double numberOfPawnsBlocking = (double) getNumberOnBlockPositions() / NUMBER_BLOCK_FORK;
@@ -172,30 +120,7 @@ public class BlackHeuristics extends Heuristics {
 
     }
 
-
-    /**
-     * @param rhombus
-     * @return number of black pawns on tiles if condition is true, 0 otherwise
-     */
-//    public int getNumberOnRhombus(int[][] rhombus) {
-//
-//        if (state.getNumberOf(State.Pawn.BLACK) >= THRESHOLD) {
-//            return getValuesOnSpecialCells(rhombus);
-//        } else {
-//            return 0;
-//        }
-//    }
-//
-//    public int getNumberOnRhombus(int quadrant) {
-//        int num = 0;
-//
-//        for(int[] pos: rhombusByQuadrant[quadrant]) {
-//            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
-//        }
-//
-//        return num;
-//    }
-
+    // TODO: I think this function may be deleted, delete if it is
     /**
      * @return number of black pawns on special cell configuration
      */
@@ -211,6 +136,7 @@ public class BlackHeuristics extends Heuristics {
 
     }
 
+    // TODO: refactor, this code is unreadable
     /**
      * @return number of white pawns on blocking positions
      */
@@ -225,22 +151,22 @@ public class BlackHeuristics extends Heuristics {
                         otherwise it's useless
                         Controlla anche se le righe/colonne sono già occupate, in tal caso non ci si mette
                      */
-                if (kingPosition(state)[0] < 4 && pos[0] < 4) {
+                if (getKingPosition()[0] < 4 && pos[0] < 4) {
                     if (pos[0] == 0 && countFreeColumn(state, pos) == 0)
                         num++;
                     else if ((pos[1] == 0 || pos[1] == 8) && countFreeRow(state, pos) == 0)
                         num++;
-                } else if (kingPosition(state)[0] > 4 && pos[0] > 4) {
+                } else if (getKingPosition()[0] > 4 && pos[0] > 4) {
                     if (pos[0] == 8 && countFreeColumn(state, pos) == 0)
                         num++;
                     else if ((pos[1] == 0 || pos[1] == 8)  && countFreeRow(state, pos) == 0)
                         num++;
-                } else if (kingPosition(state)[1] < 4 && pos[1] < 4) {
+                } else if (getKingPosition()[1] < 4 && pos[1] < 4) {
                     if (pos[1] == 0 && countFreeRow(state, pos) == 0)
                         num++;
                     else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
                         num++;
-                } else if (kingPosition(state)[1] > 4 && pos[1] > 4) {
+                } else if (getKingPosition()[1] > 4 && pos[1] > 4) {
                     if (pos[1] == 8 && countFreeRow(state, pos) == 0)
                         num++;
                     else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
@@ -257,39 +183,105 @@ public class BlackHeuristics extends Heuristics {
      * @return the most open quadrant, according to this logic:
      */
     public int getMostOpenQuadrant() {
-        int bestCross = -1;
+        int cross = -1;
         int min = Integer.MAX_VALUE;
         for(int i = 0; i < 4; i++) {
             int pawnsOnCross = getPawnsOnPosition("W", getCrosses(), i);
             if(pawnsOnCross < min) {
-                bestCross = i;
+                cross = i;
                 min = pawnsOnCross;
             }
         }
-        int q1 = bestCross;
-        int q2 = (bestCross < 3) ? bestCross + 1 : 0;
+        int previous = cross;
+        int next = (cross + 1) % 4;
 
-        return(getPawnsOnPosition("W", getQuadrants(), q1) <= getPawnsOnPosition("W", getQuadrants(), q2) ? q1 : q2);
+        return(getPawnsOnPosition("W", getQuadrants(), previous) < getPawnsOnPosition("W", getQuadrants(), next) ? previous : next);
     }
-
-//    private int getNumberOnBlockPositions(int quadrant) {
-//        int num = 0;
-//
-//        for(int[] pos: blockPositionsByQuadrant[quadrant]) {
-//            if(state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) num++;
-//        }
-//
-//        return num;
-//    }
 
     /**
      *
-     * @return the quadrant to defende, according to this logic:
-     * if the king is
+     * @return the quadrant to defend, according to this logic:
+     * If the king is in a quadrant, that is the main quadrant to defend;
+     * note that if the king is a quadrant but there is an open way in another quadrant this get closed automatically
+     * in order not to lose.
+     * If this is the case but the quadrant is already defended then the adjacent ones must be defended, considering
+     * the one with fewer whites first.
+     * If the king is on a cross then the quadrant to defend is the one with fewer whites among the two.
+     * If this is the case but the quadrant is already defended then the second one gets defended, otherwise the
+     * most open one among the remaining two.
+     * If the king is in the castle the most open quadrant must be defended, and in case it is already defended then
+     * the other ones in order of openness.
      */
     public int getQuadrantToDefend() {
-        // TODO: fill body
+        int result = -1;
+
+        if(isKingInPosition(getQuadrants())) {
+            int quadrant = getPositionWithKing(getQuadrants());
+            if(!isQuadrantDefended(quadrant)) {
+                return quadrant;
+            } else if(isQuadrantDefended(quadrant)) {
+                int previous = (quadrant + 3) % 4;
+                int next = (quadrant + 1) % 4;
+                if(!isQuadrantDefended(previous) && !isQuadrantDefended(next)) {
+                    return (getPawnsOnPosition("B", getQuadrants(), previous) < getPawnsOnPosition("B", getQuadrants(), previous)) ?
+                            previous : next;
+                }
+                else if(!isQuadrantDefended(previous) && isQuadrantDefended(next)) return previous;
+                else if(isQuadrantDefended(previous) && !isQuadrantDefended(next)) return next;
+                else {
+                    return (quadrant + 2) % 4;
+                }
+            }
+        } else if(isKingInPosition(getCrosses())) {
+            int cross = getPositionWithKing(getCrosses());
+            int previous = cross;
+            int next = (cross + 1) % 4;
+            if(!isQuadrantDefended(previous) && !isQuadrantDefended(next)) {
+                return (getPawnsOnPosition("W", getQuadrants(), previous) < getPawnsOnPosition("W", getQuadrants(), previous)) ?
+                        previous : next;
+            }
+            else if(!isQuadrantDefended(previous) && isQuadrantDefended(next)) return previous;
+            else if(isQuadrantDefended(previous) && !isQuadrantDefended(next)) return next;
+            else {
+                return (getPawnsOnPosition("W", getQuadrants(), (cross + 2) % 4) < getPawnsOnPosition("W", getQuadrants(), (cross + 3) % 4)) ?
+                        (cross + 2) % 4 : (cross + 3) % 4;
+            }
+        } else if(isKingInCastle()) {
+            int quadrant = getMostOpenQuadrant();
+            if(!isQuadrantDefended(quadrant)) return quadrant;
+            else {
+                int min = Integer.MAX_VALUE;
+                for(int i = 0; i < 4; i++) {
+                    if(i != quadrant && getPawnsOnPosition("W", getQuadrants(), i) < min) {
+                        min = getPawnsOnPosition("W", getQuadrants(), i);
+                        result = i;
+                    }
+                }
+            }
+        }
         return -1;
+    }
+
+    /**
+     *
+     * @param quadrant: the quadrant to analyze
+     * @return true if there is at least one COMPLETE defense, false otherwise
+     */
+    public boolean isQuadrantDefended(int quadrant) {
+        return getPawnsOnPosition("B", getBlockPositions(), quadrant) == PAWNS_ON_SINGLE_DEFENSE
+                || getPawnsOnPosition("B", getNarrowRhombus(), quadrant) == PAWNS_ON_SINGLE_DEFENSE
+                || getPawnsOnPosition("B", getWideRhombus(), quadrant) == PAWNS_ON_SINGLE_DEFENSE
+                || getPawnsOnPosition("B", getExtremeDefenses(), quadrant) == PAWNS_ON_SINGLE_EXTREME_DEFENSE;
+    }
+
+    /**
+     *
+     * @param quadrant: quadrant to analyze
+     * @return the best position to assume in a particular quadrant
+     */
+    public int[][] getBestDefense(int quadrant) {
+        // TODO: fill body
+        return null;
     }
 
 }
