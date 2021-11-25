@@ -29,8 +29,11 @@ public class WhiteHeuristics extends Heuristics {
             {5,3},  {6,5}
             */
             //Provando aperture diverse
+            {3, 2}, {3, 6},
+            {5, 3}, {5, 6}/*
+
             {2,1},  {2,7},
-            {6,1},  {6,7}
+            {6,1},  {6,7} */
 
     };
 
@@ -38,16 +41,10 @@ public class WhiteHeuristics extends Heuristics {
     private final static int[][] blockPositions = {
             //{0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
             //Provando posizioni diverse
-            {2,1},  {2,7},
-            {6,1},  {6,7}
+            {2,2},  {2,6},
+            {6,2},  {6,6}
     };
 
-    // TODO: refactor following black heuristics pattern
-    private final static int[][] anglePositions = {
-            //Angoli
-            {1,1}, {1,7},
-            {7,1}, {7,7}
-    };
 
     private final static int NUM_BEST_POSITION = bestPositions.length;
     private final static int NUM_BLOCK_POSITION = blockPositions.length;
@@ -69,11 +66,11 @@ public class WhiteHeuristics extends Heuristics {
         weights.put(BEST_POSITIONS, 2.0);
         weights.put(BLACK_EATEN, 20.0);
         weights.put(WHITE_ALIVE, 40.0);
-        weights.put(NUM_ESCAPES_KING, 18.0);
-        weights.put(BLACK_SURROUND_KING, 7.0);
+        weights.put(NUM_ESCAPES_KING, 20.0);
+        //weights.put(BLACK_SURROUND_KING, 7.0);
         weights.put(PROTECTION_KING, 18.0);
         // Sost 10 -> 15
-        weights.put(BLOCK_CITIZENS, 15.0);
+        weights.put(BLOCK_CITIZENS, 10.0);
         // weights.put(ANGLE_POSITIONS, 15.0);
 
 
@@ -97,8 +94,8 @@ public class WhiteHeuristics extends Heuristics {
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK))
                 / GameAshtonTablut.NUM_BLACK;
-        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(getKingPosition(),
-                State.Turn.BLACK.toString())) / getNumEatingPositions(state);
+//        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(getKingPosition(),
+//                State.Turn.BLACK.toString())) / getNumEatingPositions(state);
         double protectionKing = protectionKing();
         double blockPositions = (double) getNumberOnBlockPositions() / NUM_BLOCK_POSITION;
 
@@ -110,7 +107,7 @@ public class WhiteHeuristics extends Heuristics {
             System.out.println("Number of white pawns in best positions " + bestPositions);
             System.out.println("Number of white pawns in block positions " + blockPositions);
             System.out.println("Number of escapes: " + numberOfWinEscapesKing);
-            System.out.println("Number of black surrounding king: " + blackSurroundKing);
+            //System.out.println("Number of black surrounding king: " + blackSurroundKing);
         }
 
         Map<String, Double> values = new HashMap<String, Double>();
@@ -118,7 +115,7 @@ public class WhiteHeuristics extends Heuristics {
         values.put(WHITE_ALIVE, numberOfWhiteAlive);
         values.put(BLACK_EATEN, numberOfBlackEaten);
         values.put(NUM_ESCAPES_KING,numberOfWinEscapesKing);
-        values.put(BLACK_SURROUND_KING,blackSurroundKing);
+        //values.put(BLACK_SURROUND_KING,blackSurroundKing);
         values.put(PROTECTION_KING,protectionKing);
         values.put(BLOCK_CITIZENS, blockPositions);
         //values.put(ANGLE_POSITIONS, anglePositions);
