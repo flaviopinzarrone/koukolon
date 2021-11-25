@@ -38,8 +38,8 @@ public class WhiteHeuristics extends Heuristics {
     private final static int[][] blockPositions = {
             //{0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
             //Provando posizioni diverse
-            {5, 1}, {5, 7}, {3, 1}, {3, 7},
-            {1, 3}, {7, 3}, {1, 5}, {7, 5}
+            {2,1},  {2,7},
+            {6,1},  {6,7}
     };
 
     // TODO: refactor following black heuristics pattern

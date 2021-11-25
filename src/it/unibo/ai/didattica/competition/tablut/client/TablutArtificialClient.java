@@ -97,7 +97,7 @@ public class TablutArtificialClient extends TablutClient {
 
 
         System.out.println("\n"+
-                        "+--------------------------  Tablut competition 2021  ---------------------------------------------------+");
+                        "+--------------------------  Tablut competition 2021  ---------------------------------------------------+\n");
         System.out.println(
                         "|                  ██   ██  ██████  ██    ██ ██   ██  ██████  ██       ██████  ███    ██                 |\n" +
                         "|                  ██  ██  ██    ██ ██    ██ ██  ██  ██    ██ ██      ██    ██ ████   ██                 |\n" +
