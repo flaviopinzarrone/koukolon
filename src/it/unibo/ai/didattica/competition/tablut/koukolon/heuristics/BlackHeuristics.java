@@ -49,7 +49,7 @@ public class BlackHeuristics extends Heuristics {
         weights.put(BLACK_ALIVE, 32.0);
         weights.put(WHITE_EATEN, 35.0);
         weights.put(BLACK_SURROUND_KING, 30.0);
-        weights.put(WEAK_RHOMBUS_POSITIONS, 10.0);
+        weights.put(WEAK_RHOMBUS_POSITIONS, 3.0);
         // weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         // weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         // weights.put(BLOCK_FORK_POSITIONS, 10.0);
@@ -70,7 +70,8 @@ public class BlackHeuristics extends Heuristics {
      */
     @Override
     public double evaluateState() {
-        if(this.state.getTurn().equalsTurn("D")) return -50;
+        if(this.state.getTurn().equalsTurn("D"))
+            return -50;
 
         double utilityValue = 0.0;
 

@@ -25,7 +25,7 @@ public class replayGames {
         in.close();
         for (State state : states){
             gui.update(state);
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(2);
         }
 
     }
