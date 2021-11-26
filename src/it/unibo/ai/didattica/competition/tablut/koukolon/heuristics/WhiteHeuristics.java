@@ -24,37 +24,21 @@ public class WhiteHeuristics extends Heuristics {
     private final String NUM_ESCAPES_KING = "numberOfWinEscapesKing";
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
     private final String PROTECTION_KING = "protectionKing";
-    private final String BLOCK_CITIZENS = "blockingCitizens";
-    private final String ANGLE_POSITIONS = "anglePositions";
 
-    //Threshold used to decide whether to use best positions configuration
+    // unused strings
+    // private final String BLOCK_CITIZENS = "blockingCitizens";
+    // private final String ANGLE_POSITIONS = "anglePositions";
+
+    // threshold used to decide whether to use best positions configuration
     private final static int THRESHOLD_BEST = 2;
 
-    // TODO: refactor following black heuristics pattern
-    //Matrix of favourite white positions in the initial stages of the game
-    private final static int[][] bestPositions = {
-
-            {2,3},  {3,5},
-            {5,3},  {6,5}
-    };
-
-    // TODO: refactor following black heuristics pattern
-    private final static int[][] blockPositions = {
-            //{0, 6}, {0, 2}, {6, 0}, {2, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
-            //Provando posizioni diverse
-            {5, 1}, {5, 7},
-            {3, 1}, {3, 7}
-    };
-
-
-    private final static int NUM_BEST_POSITION = bestPositions.length;
-    private final static int NUM_BLOCK_POSITION = blockPositions.length;
+    private final static int NUM_BEST_POSITION = 4;
 
     private Map<String,Double> weights;
     private Map<String,Double> values;
     private String[] keys;
 
-    //Flag to enable console print
+    // flag to enable console print
     private boolean flag = false;
 
     public WhiteHeuristics(State state) {
@@ -89,14 +73,13 @@ public class WhiteHeuristics extends Heuristics {
             utilityValue += 100;
 
         //Atomic functions to combine to get utility value through the weighted sum
-        double bestPositions = (double) getNumberOnBestPositions() / NUM_BEST_POSITION;
+        double bestPositions = (double) getPawnsOnPosition("W", getBestPositions()) / NUM_BEST_POSITION;
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK))
                 / GameAshtonTablut.NUM_BLACK;
-        double blackSurroundKing = (double)(getNumEatingPositions(state) - checkNearPawns(getKingPosition(),
-                State.Turn.BLACK.toString())) / getNumEatingPositions(state);
+        double blackSurroundKing = (double)(getNumEatingPositions() - checkNearPawns(getKingPosition(),
+                State.Turn.BLACK.toString())) / getNumEatingPositions();
         double protectionKing = protectionKing();
-        double blockPositions = (double) getNumberOnBlockPositions() / NUM_BLOCK_POSITION;
 
         int numberWinWays = countWinWays(state);
         double numberOfWinEscapesKing = numberWinWays>1 ? (double)countWinWays(state)/4 : 0.0;
@@ -104,7 +87,6 @@ public class WhiteHeuristics extends Heuristics {
         if(flag){
             System.out.println("Number of white alive: " + numberOfWhiteAlive);
             System.out.println("Number of white pawns in best positions " + bestPositions);
-            System.out.println("Number of white pawns in block positions " + blockPositions);
             System.out.println("Number of escapes: " + numberOfWinEscapesKing);
             System.out.println("Number of black surrounding king: " + blackSurroundKing);
         }
@@ -116,9 +98,7 @@ public class WhiteHeuristics extends Heuristics {
         values.put(NUM_ESCAPES_KING,numberOfWinEscapesKing);
         values.put(BLACK_SURROUND_KING,blackSurroundKing);
         values.put(PROTECTION_KING,protectionKing);
-        values.put(BLOCK_CITIZENS, blockPositions);
-        //values.put(ANGLE_POSITIONS, anglePositions);
-
+        // values.put(ANGLE_POSITIONS, anglePositions);
 
         for (int i=0; i < weights.size(); i++){
             utilityValue += weights.get(keys[i]) * values.get(keys[i]);
@@ -131,105 +111,55 @@ public class WhiteHeuristics extends Heuristics {
         return utilityValue;
     }
 
-    // TODO: may probably be deleted in favor of more general function
+
     /**
-     * @return number of white pawns on blocking positions
-     */
-    private int getNumberOnBlockPositions() {
-
-        int num = 0;
-
-        if (state.getNumberOf(State.Pawn.WHITE) >= GameAshtonTablut.NUM_WHITE - THRESHOLD_BEST) {
-            for (int[] pos : blockPositions) {
-                if (state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.WHITE.toString())) {
-                    /*
-                        Check also if the blocking pawn is in the same board half of the king
-                        otherwise it's useless
-                     */
-                    if (getKingPosition()[0] < 4 && pos[0] < 4)
-                        num++;
-                    else if (getKingPosition()[0] > 4 && pos[0] > 4)
-                        num++;
-                    else if (getKingPosition()[1] < 4 && pos[1] < 4)
-                        num++;
-                    else if (getKingPosition()[1] > 4 && pos[1] > 4)
-                        num++;
-                }
-            }
-        }
-
-        return num;
-    }
-
-    // TODO: may probably be deleted in favor of more general function
-    /**
-     *
-     * @return number of white pawns on best positions
-     */
-    private int getNumberOnBestPositions(){
-
-        int num = 0;
-
-        if (state.getNumberOf(State.Pawn.WHITE) >= GameAshtonTablut.NUM_WHITE - THRESHOLD_BEST){
-            for(int[] pos: bestPositions){
-                if(state.getPawn(pos[0],pos[1]).equalsPawn(State.Pawn.WHITE.toString())){
-                    num++;
-                }
-            }
-        }
-
-        return num;
-    }
-
-    // TODO: refactor, there are nested weights and code sucks
-    /***
      *
      * @return value according to the protection level of the king whether an enemy pawn is next to it
      */
     private double protectionKing(){
 
-        //Values whether there is only a white pawn near to the king
+        // Vvlues whether there is only a white pawn near to the king
         final double VAL_NEAR = 0.6;
         final double VAL_TOT = 1.0;
 
         double result = 0.0;
 
         int[] kingPos = getKingPosition();
-        //Pawns near to the king
+        // pawns near to the king
         ArrayList<int[]> pawnsPositions = (ArrayList<int[]>) positionNearPawns(state,kingPos,State.Pawn.BLACK.toString());
 
-        //There is a black pawn that threatens the king and 2 pawns are enough to eat the king
-        if (pawnsPositions.size() == 1 && getNumEatingPositions(state) == 2){
+        // there is a black pawn that threatens the king and 2 pawns are enough to eat the king
+        if (pawnsPositions.size() == 1 && getNumEatingPositions() == 2){
             int[] enemyPos = pawnsPositions.get(0);
-            //Used to store other position from where king could be eaten
+            // used to store other position from where king could be eaten
             int[] targetPosition = new int[2];
-            //Enemy right to the king
+            // enemy right to the king
             if(enemyPos[0] == kingPos[0] && enemyPos[1] == kingPos[1] + 1){
-                //Left to the king there is a white pawn and king is protected
+                // left to the king there is a white pawn and king is protected
                 targetPosition[0] = kingPos[0];
                 targetPosition[1] = kingPos[1] - 1;
                 if (state.getPawn(targetPosition[0],targetPosition[1]).equalsPawn(State.Pawn.WHITE.toString())){
                     result += VAL_NEAR;
                 }
-            //Enemy left to the king
+            // enemy left to the king
             }else if(enemyPos[0] == kingPos[0] && enemyPos[1] == kingPos[1] -1){
-                //Right to the king there is a white pawn and king is protected
+                // right to the king there is a white pawn and king is protected
                 targetPosition[0] = kingPos[0];
                 targetPosition[1] = kingPos[1] + 1;
                 if(state.getPawn(targetPosition[0],targetPosition[1]).equalsPawn(State.Pawn.WHITE.toString())){
                     result += VAL_NEAR;
                 }
-            //Enemy up to the king
+            // enemy up to the king
             }else if(enemyPos[1] == kingPos[1] && enemyPos[0] == kingPos[0] - 1){
-                //Down to the king there is a white pawn and king is protected
+                // down to the king there is a white pawn and king is protected
                 targetPosition[0] = kingPos[0] + 1;
                 targetPosition[1] = kingPos[1];
                 if(state.getPawn(targetPosition[0], targetPosition[1]).equalsPawn(State.Pawn.WHITE.toString())){
                     result += VAL_NEAR;
                 }
-            //Enemy down to the king
+            // enemy down to the king
             }else{
-                //Up there is a white pawn and king is protected
+                // up there is a white pawn and king is protected
                 targetPosition[0] = kingPos[0] - 1;
                 targetPosition[1] = kingPos[1];
                 if(state.getPawn(targetPosition[0], targetPosition[1]).equalsPawn(State.Pawn.WHITE.toString())){
@@ -237,11 +167,11 @@ public class WhiteHeuristics extends Heuristics {
                 }
             }
 
-            //Considering whites to use as barriers for the target pawn
+            // considering whites to use as barriers for the target pawn
             double otherPoints = VAL_TOT - VAL_NEAR;
             double contributionPerN = 0.0;
 
-            //Whether it is better to keep free the position
+            //whether it is better to keep free the position
             if (targetPosition[0] == 0 || targetPosition[0] == 8 || targetPosition[1] == 0 || targetPosition[1] == 8){
                 if(state.getPawn(targetPosition[0],targetPosition[1]).equalsPawn(State.Pawn.EMPTY.toString())){
                     result = 1.0;
@@ -249,7 +179,7 @@ public class WhiteHeuristics extends Heuristics {
                     result = 0.0;
                 }
             }else{
-                //Considering a reduced number of neighbours whether target is near to citadels or throne
+                // considering a reduced number of neighbours whether target is near to citadels or throne
                 if (targetPosition[0] == 4 && targetPosition[1] == 2 || targetPosition[0] == 4 && targetPosition[1] == 6
                         || targetPosition[0] == 2 && targetPosition[1] == 4 || targetPosition[0] == 6 && targetPosition[1] == 4
                         || targetPosition[0] == 3 && targetPosition[1] == 4 || targetPosition[0] == 5 && targetPosition[1] == 4
@@ -265,9 +195,6 @@ public class WhiteHeuristics extends Heuristics {
         }
         return result;
     }
-
-
-
 
     /**
      *
