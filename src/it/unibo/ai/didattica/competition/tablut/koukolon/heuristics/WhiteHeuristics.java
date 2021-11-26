@@ -72,7 +72,7 @@ public class WhiteHeuristics extends Heuristics {
         if(this.state.getTurn().equalsTurn("D"))
             utilityValue += 100;
 
-        //Atomic functions to combine to get utility value through the weighted sum
+        // atomic functions to combine to get utility value through the weighted sum
         double bestPositions = (double) getPawnsOnPosition("W", getBestPositions()) / NUM_BEST_POSITION;
         double numberOfWhiteAlive =  (double)(state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
         double numberOfBlackEaten = (double)(GameAshtonTablut.NUM_BLACK - state.getNumberOf(State.Pawn.BLACK))
