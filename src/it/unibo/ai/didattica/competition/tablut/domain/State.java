@@ -234,19 +234,21 @@ public abstract class State implements Serializable {
 
     public void saveState() throws IOException, ClassNotFoundException {
         ArrayList<State> list = new ArrayList<State>();
-        // percorso in cui salvare/caricare la partita
+
+        // path where to save the game
         String home = System.getenv("HOME");
         String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
 
-        // Leggo la lista contenente gli stati dal file
+        // reading from file the list containing the states
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
 
         list = (ArrayList<State>) in.readObject();
         in.close();
-        // ci aggiungo lo stato attuale
+
+        // adding current state
         list.add(this);
 
-        // riscrivo il file con la nuova lista.
+        // rewriting file with new list
         ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(path));
         out.writeObject(list);
         out.close();
