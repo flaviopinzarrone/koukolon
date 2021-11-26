@@ -5,6 +5,15 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of general heuristics and utilities
+ *
+ * @author Yuri Noviello
+ * @author Francesco Olivo
+ * @author Enrico Pallotta
+ * @æuthor Flavio Pinzarrone
+ *
+ */
 public abstract class Heuristics {
 
     protected State state;

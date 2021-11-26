@@ -5,6 +5,15 @@ import it.unibo.ai.didattica.competition.tablut.domain.State;
 
 import java.util.*;
 
+/**
+ * Implementation of the black heuristics
+ *
+ * @author Yuri Noviello
+ * @author Francesco Olivo
+ * @author Enrico Pallotta
+ * @æuthor Flavio Pinzarrone
+ *
+ */
 public class BlackHeuristics extends Heuristics {
 
     private final String WIDE_RHOMBUS_POSITIONS = "wideRhombusPositions";

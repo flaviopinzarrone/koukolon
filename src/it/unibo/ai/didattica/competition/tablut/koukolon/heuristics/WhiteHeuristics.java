@@ -7,6 +7,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of the white heuristics
+ *
+ * @author Yuri Noviello
+ * @author Francesco Olivo
+ * @author Enrico Pallotta
+ * @æuthor Flavio Pinzarrone
+ *
+ */
 public class WhiteHeuristics extends Heuristics {
 
     private final String BEST_POSITIONS = "bestPositions";
