@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 public class replayGames {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
 
-
-        // percorso in cui salvare/caricare la partita, cambiatelo anche nella funzione save() in State.java
         String home = System.getenv("HOME");
         String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));

@@ -13,6 +13,8 @@ import java.util.ArrayList;
  */
 public abstract class State implements Serializable {
 
+    private static final long serialVersionUID = -4274658193099652587L;
+
     /**
      * Turn represent the player that has to move or the end of the game(A win
      * by a player or a draw)
@@ -232,12 +234,8 @@ public abstract class State implements Serializable {
         return count;
     }
 
-    public void saveState() throws IOException, ClassNotFoundException {
+    public void saveState(String path) throws IOException, ClassNotFoundException {
         ArrayList<State> list = new ArrayList<State>();
-
-        // path where to save the game
-        String home = System.getenv("HOME");
-        String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
 
         // reading from file the list containing the states
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
