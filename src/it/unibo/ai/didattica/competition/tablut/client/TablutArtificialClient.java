@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.UnknownHostException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 public class TablutArtificialClient extends TablutClient {
@@ -147,7 +148,7 @@ public class TablutArtificialClient extends TablutClient {
         // still alive until you are playing
 
         String home = System.getenv("HOME");
-        String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
+        String path = "Executables/games_savings/game.dat";
         System.out.println("Path: " + path);
         while (true) {
             if(save) {
