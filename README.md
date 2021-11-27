@@ -9,7 +9,7 @@ described in this
 [paper](http://ww.aagenielsen.dk/LinnaeusPaper-Longer.pdf).
 
 ## Koukolon
-Koukolon is an artificial player for Ashton's Tablut, developed to
+Koukolon is an artificial player for Ashton's Tablut, developed by Enrico Pallotta, Francesco Olivo, Yuri Noviello e Flavio Pinzarrone to
 compete in 2021 Tablut Challenge, organized by professor Milano and
 tutor Galassi for Fundamentals of Artificial Intelligence Course,
 which is part of the AI Master Degree of University of Bologna.
