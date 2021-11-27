@@ -16,64 +16,59 @@ import java.util.*;
  */
 public class BlackHeuristics extends Heuristics {
 
-    private final String WIDE_RHOMBUS_POSITIONS = "wideRhombusPositions";
-    private final String NARROW_RHOMBUS_POSITIONS = "narrowRhombusPositions";
-    private final String BLOCK_FORK_POSITIONS = "blockForkPositions";
+
     private final String WHITE_EATEN = "numberOfWhiteEaten";
     private final String BLACK_ALIVE = "numberOfBlackAlive";
     private final String BLACK_SURROUND_KING = "blackSurroundKing";
-    private final String BLACK_ON_WEAK_SIDE = "blackOnWeakSide";
     private final String WEAK_RHOMBUS_POSITIONS = "weakRhombusPositions";
 
+    /* unused strings
+    private final String WIDE_RHOMBUS_POSITIONS = "wideRhombusPositions";
+    private final String NARROW_RHOMBUS_POSITIONS = "narrowRhombusPositions";
+    private final String BLOCK_FORK_POSITIONS = "blockForkPositions";
+    private final String BLACK_ON_WEAK_SIDE = "blackOnWeakSide";
+     */
 
-    //Threshold used to decide whether to use rhombus configuration
-    private final int THRESHOLD = 10;
     private final int PAWNS_ON_SINGLE_DEFENSE = 2;
     private final int PAWNS_ON_SINGLE_EXTREME_DEFENSE = 4;
-    //Number of tiles on rhombus
+    private final int BLOCKS_PER_QUADRANT = 2;
+
+    /* unused values
+    private final int THRESHOLD = 10;
     private final int PAWNS_ON_TOTAL_DEFENSE = 8;
+    private final int NUMBER_BLOCK_FORK = 8;
+     */
 
     private final Map<String, Double> weights;
     private String[] keys;
 
-    //Flag to enable console print
+    // flag to enable console print
     private boolean flag = false;
 
-    // TODO: this variable is only used in function to be refactored
-    private final int[][] blockPositions = {
-            {0, 2}, {0, 6}, {2, 0}, {6, 0}, {8, 2}, {2, 8}, {8, 6}, {6, 8}
-    };
-
-    private final int NUMBER_BLOCK_FORK = 8;
-    private final int BLOCKS_PER_QUADRANT = 2;
-
-    private double numberOfBlack;
-    private double numberOfWhiteEaten;
 
     public BlackHeuristics(State state) {
 
         super(state);
-        //Initializing weights
+
+        // initializing weights
         weights = new HashMap<String, Double>();
         weights.put(BLACK_ALIVE, 32.0);
         weights.put(WHITE_EATEN, 35.0);
         weights.put(BLACK_SURROUND_KING, 30.0);
         weights.put(WEAK_RHOMBUS_POSITIONS, 3.0);
+
+        // removed weights
         // weights.put(WIDE_RHOMBUS_POSITIONS, 10.0);
         // weights.put(NARROW_RHOMBUS_POSITIONS, 2.0);
         // weights.put(BLOCK_FORK_POSITIONS, 10.0);
         // weights.put(BLACK_ON_WEAK_SIDE, 25.0);
 
-        // TODO: complete refactoring of Heuristics classes
-        // TODO: change weights according to quadrants to defend
-
-        //Extraction of keys
+        // keys extraction
         keys = new String[weights.size()];
         keys = weights.keySet().toArray(new String[0]);
 
     }
 
-    // TODO: refactor
     /**
      * @return the evaluation of the states using a weighted sum
      */
@@ -84,11 +79,13 @@ public class BlackHeuristics extends Heuristics {
 
         double utilityValue = 0.0;
 
-        //Atomic functions to combine to get utility value through the weighted sum
-        numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
-        numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
-        double pawnsNearKing = (double) checkNearPawns(getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions(state);
+        // atomic functions to combine to get utility value through the weighted sum
+        double numberOfBlack = (double) state.getNumberOf(State.Pawn.BLACK) / GameAshtonTablut.NUM_BLACK;
+        double numberOfWhiteEaten = (double) (GameAshtonTablut.NUM_WHITE - state.getNumberOf(State.Pawn.WHITE)) / GameAshtonTablut.NUM_WHITE;
+        double pawnsNearKing = (double) checkNearPawns(getKingPosition(), State.Turn.BLACK.toString()) / getNumEatingPositions();
         double numberOfPawnsOnWeakRhombus = (double) getPawnsOnPosition("B", getWideRhombus(), getMostOpenQuadrant()) / BLOCKS_PER_QUADRANT;
+
+        // unused states
         // double numberOfPawnsOnWideRhombus = (double) getPawnsOnPosition("B", getWideRhombus()) / PAWNS_ON_TOTAL_DEFENSE;
         // double numberOfPawnsOnWeakRhombus = (double) getNumberOnRhombus(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
         // double numberOfPawnsOnWideRhombus = (double) getNumberOnRhombus(rhombusWide) / NUM_TILES_ON_RHOMBUS;
@@ -96,22 +93,26 @@ public class BlackHeuristics extends Heuristics {
         // double numberOfPawnsOnWeakSide = (double)  getNumberOnBlockPositions(getMostOpenQuadrant("W")) / BLOCKS_PER_QUADRANT;
 
         if (flag) {
-            // System.out.println("Number of wide rhombus: " + numberOfPawnsOnWeakRhombus);
-            //System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
-            //System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
-            //System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
             System.out.println("Number of pawns near to the king:" + pawnsNearKing);
             System.out.println("Number of white pawns eaten: " + numberOfWhiteEaten);
             System.out.println("Black pawns: " + numberOfBlack);
+
+            // unused prints
+            // System.out.println("Number of wide rhombus: " + numberOfPawnsOnWeakRhombus);
+            // System.out.println("Number of narrow rhombus: " + numberOfPawnsOnNarrowRhombus);
+            // System.out.println("Number of blocking pawns: " + numberOfPawnsBlocking);
+            // System.out.println("Number of blocking pawns on weak side: " + numberOfPawnsOnWeakSide);
         }
 
 
-        //Weighted sum of functions to get final utility value
+        // weighted sum of functions to get final utility value
         Map<String, Double> atomicUtilities = new HashMap<String, Double>();
         atomicUtilities.put(BLACK_ALIVE, numberOfBlack);
         atomicUtilities.put(WHITE_EATEN, numberOfWhiteEaten);
         atomicUtilities.put(BLACK_SURROUND_KING, pawnsNearKing);
         atomicUtilities.put(WEAK_RHOMBUS_POSITIONS, numberOfPawnsOnWeakRhombus);
+
+        // unused weights
         // atomicUtilities.put(WIDE_RHOMBUS_POSITIONS, numberOfPawnsOnWideRhombus);
         // atomicUtilities.put(BLOCK_FORK_POSITIONS, numberOfPawnsBlocking);
         // atomicUtilities.put(BLACK_ON_WEAK_SIDE, numberOfPawnsOnWeakSide);
@@ -127,69 +128,9 @@ public class BlackHeuristics extends Heuristics {
         }
 
         return utilityValue;
-
-    }
-
-    // TODO: I think this function may be deleted, delete if it is
-    /**
-     * @return number of black pawns on special cell configuration
-     */
-    public int getValuesOnSpecialCells(int[][] cells) {
-
-        int count = 0;
-        for (int[] position : cells) {
-            if (state.getPawn(position[0], position[1]).equalsPawn(State.Pawn.BLACK.toString())) {
-                count++;
-            }
-        }
-        return count;
-
-    }
-
-    // TODO: refactor, this code is unreadable
-    /**
-     * @return number of white pawns on blocking positions
-     */
-    private int getNumberOnBlockPositions() {
-
-        int num = 0;
-
-        for (int[] pos : blockPositions) {
-            if (state.getPawn(pos[0], pos[1]).equalsPawn(State.Pawn.BLACK.toString())) {
-                /*
-                        Check also if the blocking pawn is in the same board half of the king
-                        otherwise it's useless
-                        Controlla anche se le righe/colonne sono già occupate, in tal caso non ci si mette
-                     */
-                if (getKingPosition()[0] < 4 && pos[0] < 4) {
-                    if (pos[0] == 0 && countFreeColumn(state, pos) == 0)
-                        num++;
-                    else if ((pos[1] == 0 || pos[1] == 8) && countFreeRow(state, pos) == 0)
-                        num++;
-                } else if (getKingPosition()[0] > 4 && pos[0] > 4) {
-                    if (pos[0] == 8 && countFreeColumn(state, pos) == 0)
-                        num++;
-                    else if ((pos[1] == 0 || pos[1] == 8)  && countFreeRow(state, pos) == 0)
-                        num++;
-                } else if (getKingPosition()[1] < 4 && pos[1] < 4) {
-                    if (pos[1] == 0 && countFreeRow(state, pos) == 0)
-                        num++;
-                    else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
-                        num++;
-                } else if (getKingPosition()[1] > 4 && pos[1] > 4) {
-                    if (pos[1] == 8 && countFreeRow(state, pos) == 0)
-                        num++;
-                    else if ((pos[0] == 0 || pos[0] == 8)  && countFreeColumn(state, pos) == 0)
-                        num++;
-                }
-            }
-        }
-
-        return num;
     }
 
     /**
-     *
      * @return the most open quadrant, according to this logic:
      */
     public int getMostOpenQuadrant() {
@@ -282,19 +223,6 @@ public class BlackHeuristics extends Heuristics {
                 || getPawnsOnPosition("B", getNarrowRhombus(), quadrant) == PAWNS_ON_SINGLE_DEFENSE
                 || getPawnsOnPosition("B", getWideRhombus(), quadrant) == PAWNS_ON_SINGLE_DEFENSE
                 || getPawnsOnPosition("B", getExtremeDefenses(), quadrant) == PAWNS_ON_SINGLE_EXTREME_DEFENSE;
-    }
-
-    /**
-     *
-     * @param quadrant: quadrant to analyze
-     * @return the best position to assume in a particular quadrant, according to this logic:
-     * if the quadrant is empty the best defense is narrow rhombus
-     *
-     *
-     */
-    public int[][][] getBestDefense(int quadrant) {
-        // TODO: fill body
-        return null;
     }
 
 }

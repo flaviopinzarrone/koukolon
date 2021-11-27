@@ -31,7 +31,7 @@ public class TablutArtificialClient extends TablutClient {
 
         if (args.length < 1) {
             System.out.println("You must specify which player you are (WHITE or BLACK)");
-            System.out.println("USAGE: ./runmyplayer <black|white> <timeout-in-seconds> <server-ip> <debug>");
+            System.out.println("USAGE: ./koukolon <black|white> <timeout-in-seconds> <server-ip> <debug>");
             System.exit(-1);
         } else {
             role = (args[0]);
@@ -41,7 +41,7 @@ public class TablutArtificialClient extends TablutClient {
                 timeout = Integer.parseInt(args[1]);
             } catch (NumberFormatException e){
                 System.out.println("Timeout must be an integer representing seconds");
-                System.out.println("USAGE: ./runmyplayer <black|white> <timeout-in-seconds> <server-ip> <debug>");
+                System.out.println("USAGE: ./koukolon <black|white> <timeout-in-seconds> <server-ip> <debug>");
                 System.exit(-1);
             }
         }
@@ -50,7 +50,7 @@ public class TablutArtificialClient extends TablutClient {
                 timeout = Integer.parseInt(args[1]);
             } catch (NumberFormatException e){
                 System.out.println("Timeout must be an integer representing seconds");
-                System.out.println("USAGE: ./runmyplayer <black|white> <timeout-in-seconds> <server-ip> <debug>");
+                System.out.println("USAGE: ./koukolon <black|white> <timeout-in-seconds> <server-ip> <debug>");
                 System.exit(-1);
             }
             ipAddress = args[2];
@@ -61,7 +61,7 @@ public class TablutArtificialClient extends TablutClient {
                 timeout = Integer.parseInt(args[1]);
             } catch (NumberFormatException e){
                 System.out.println("Timeout must be an integer representing seconds");
-                System.out.println("USAGE: ./runmyplayer <black|white> <timeout-in-seconds> <server-ip> <debug>");
+                System.out.println("USAGE: ./koukolon <black|white> <timeout-in-seconds> <server-ip> <debug>");
                 System.exit(-1);
             }
             ipAddress = args[2];
@@ -69,7 +69,7 @@ public class TablutArtificialClient extends TablutClient {
                 debug = true;
             } else {
                 System.out.println("The last argument can be only 'debug' and it allow to print logs during search");
-                System.out.println("USAGE: ./runmyplayer <black|white> <timeout-in-seconds> <server-ip> <debug>");
+                System.out.println("USAGE: ./koukolon <black|white> <timeout-in-seconds> <server-ip> <debug>");
                 System.exit(-1);
             }
         }
@@ -96,25 +96,14 @@ public class TablutArtificialClient extends TablutClient {
         GameAshtonTablut tablutGame = new GameAshtonTablut(0, -1, "logs", "white_ai", "black_ai");;
 
 
-        System.out.println("\n"+
-                        "+--------------------------  Tablut competition 2021  ---------------------------------------------------+\n");
-        System.out.println(
-                        "|                  ██   ██  ██████  ██    ██ ██   ██  ██████  ██       ██████  ███    ██                 |\n" +
-                        "|                  ██  ██  ██    ██ ██    ██ ██  ██  ██    ██ ██      ██    ██ ████   ██                 |\n" +
-                        "|                  █████   ██    ██ ██    ██ █████   ██    ██ ██      ██    ██ ██ ██  ██                 |\n" +
-                        "|                  ██  ██  ██    ██ ██    ██ ██  ██  ██    ██ ██      ██    ██ ██  ██ ██                 |\n" +
-                        "|                  ██   ██  ██████   ██████  ██   ██  ██████  ███████  ██████  ██   ████                 |\n");
-
-        System.out.println(
-                        "+-------------  Made by Francesco Olivo, Enrico Pallotta, Yuri Noviello & Flavio Pinzarrone  ------------+\n");
-
-
         // attributes depends to parameters passed to main
+        System.out.println("Team: Koukolon");
         System.out.println("Player: " + (this.getPlayer().equals(State.Turn.BLACK) ? "BLACK" : "WHITE" ));
         System.out.println("Timeout: " + this.timeout +" s");
         System.out.println("Server: " + this.serverIp);
         System.out.println("Debug mode: " + this.debug+"\n");
 
+        /* code to save game for replaying
         try {
             ArrayList<State> list = new ArrayList<State>();
             String home = System.getenv("HOME");
@@ -125,17 +114,21 @@ public class TablutArtificialClient extends TablutClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        */
         // still alive until you are playing
         while (true) {
 
+            /*
             try {
-//                System.out.println("Salvo lo stato-------------------------------------------------");
-//                System.out.println(state.getBoard());
-//                System.out.println("---------------------------------------------------------------");
+                System.out.println("Salvo lo stato-------------------------------------------------");
+                System.out.println(state.getBoard());
+                System.out.println("---------------------------------------------------------------");
                 state.saveState();
             } catch (IOException | ClassNotFoundException e) {
                 System.err.println(e.getMessage());
             }
+            */
+
             // update the current state from the server
             try {
                 this.read();
@@ -178,40 +171,47 @@ public class TablutArtificialClient extends TablutClient {
                 // if I WIN
                 else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
                     System.out.println("YOU WIN!");
-                    try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                /*
+                try {
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
-                    } catch (IOException | ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
-                    }
+                }
+ */
                     System.exit(0);
                 }
                 // if I LOSE
                 else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
                     System.out.println("YOU LOSE!");
+                    /*
                     try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
                     } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
                     }
+                    */
+
                     System.exit(0);
                 }
                 // if DRAW
                 else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
                     System.out.println("DRAW!");
+                    /*
                     try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
                     } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
                     }
+                     */
                     System.exit(0);
                 }
 
@@ -244,42 +244,49 @@ public class TablutArtificialClient extends TablutClient {
                 // if I LOSE
                 else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
                     System.out.println("YOU LOSE!");
+                    /*
                     try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
                     } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
                     }
+                     */
                     System.exit(0);
                 }
 
                 // if I WIN
                 else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
                     System.out.println("YOU WIN!");
+                    /*
                     try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
                     } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
                     }
+
+                     */
                     System.exit(0);
                 }
 
                 // if DRAW
                 else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
                     System.out.println("DRAW!");
+                    /*
                     try {
-//                        System.out.println("Salvo lo stato-------------------------------------------------");
-//                        System.out.println(state.getBoard());
-//                        System.out.println("---------------------------------------------------------------");
+                        System.out.println("Salvo lo stato-------------------------------------------------");
+                        System.out.println(state.getBoard());
+                        System.out.println("---------------------------------------------------------------");
                         state.saveState();
                     } catch (IOException | ClassNotFoundException e) {
                         System.err.println(e.getMessage());
                     }
+                     */
                     System.exit(0);
                 }
             }

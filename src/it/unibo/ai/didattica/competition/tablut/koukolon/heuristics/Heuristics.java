@@ -83,6 +83,21 @@ public abstract class Heuristics {
             }
     };
 
+    private final static int[][][] bestPositions = {
+            {
+                    {2, 3}
+            },
+            {
+                    {3, 5}
+            },
+            {
+                    {5, 3}
+            },
+            {
+                    {6, 5}
+            }
+    };
+
     private final int[][][] narrowRhombus = {
             {
                         {2, 3},
@@ -199,32 +214,16 @@ public abstract class Heuristics {
         return extremeDefenses;
     }
 
+    public static int[][][] getBestPositions() {
+        return bestPositions;
+    }
+
     public Heuristics(State state) {
         this.state = state;
     }
 
     public double evaluateState() {
         return 0;
-    }
-
-    // TODO: may be deleted
-    /**
-     * @return the position of the king
-     */
-    public int[] kingPosition(State state) {
-        //where I saved the int position of the king
-        int[] king = new int[2];
-        //obtain the board
-        State.Pawn[][] board = state.getBoard();
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board.length; j++) {
-                if (state.getPawn(i, j).equalsPawn("K")) {
-                    king[0] = i;
-                    king[1] = j;
-                }
-            }
-        }
-        return king;
     }
 
     /**
@@ -303,39 +302,6 @@ public abstract class Heuristics {
         return occupiedPosition;
     }
 
-    // TODO: near what? Improve function and documentation
-    /**
-     * @return true if king is near, false otherwise
-     */
-    protected boolean hasKingAdjacentPawns(int[] position) {
-        return checkNearPawns(position, "K") > 0;
-    }
-
-    /**
-     * @return how many pawns are in the "strategic" block positions
-     */
-    protected int getNumberOfBlockedEscape() {
-        int count = 0;
-        int[][] blockedEscapes = {{1, 1}, {1, 2}, {1, 6}, {1, 7}, {2, 1}, {2, 7}, {6, 1}, {6, 7}, {7, 1}, {7, 2}, {7, 6}, {7, 7}};
-        for (int[] position : blockedEscapes) {
-            if (state.getPawn(position[0], position[1]).equalsPawn(State.Pawn.BLACK.toString())) {
-                count++;
-            }
-        }
-        return count;
-
-    }
-
-    /**
-     * @return true if king is on an escape tile, false otherwise
-     */
-    public boolean hasWhiteWon() {
-        int[] posKing = getKingPosition();
-        boolean result;
-        result = posKing[0] == 0 || posKing[0] == 8 || posKing[1] == 0 || posKing[1] == 8;
-        return result;
-    }
-
     public boolean isKingInPosition(int[][][] positions) {
         return getPawnsOnPosition("K", positions) > 0;
     }
@@ -364,32 +330,6 @@ public abstract class Heuristics {
         return false;
     }
 
-    /**
-     * @return true if king has some way to win and assign the value of ways to escape
-     */
-    public boolean kingGoesForWin(State state) {
-        int[] kingPosition = getKingPosition();
-        int col = 0;
-        int row = 0;
-        if (!safePositionKing(state, kingPosition)) {
-            if ((!(kingPosition[1] > 2 && kingPosition[1] < 6)) && (!(kingPosition[0] > 2 && kingPosition[0] < 6))) {
-                //not safe row not safe col
-                col = countFreeColumn(state, kingPosition);
-                row = countFreeRow(state, kingPosition);
-                //System.out.println(col);
-            }
-            if ((kingPosition[1] > 2 && kingPosition[1] < 6)) {
-                // safe row not safe col
-                row = countFreeRow(state, kingPosition);
-            }
-            if ((kingPosition[0] > 2 && kingPosition[0] < 6)) {
-                // safe col not safe row
-                col = countFreeColumn(state, kingPosition);
-            }
-            return (col + row > 0);
-        }
-        return (col + row > 0);
-    }
 
     /**
      * @param state
@@ -401,7 +341,7 @@ public abstract class Heuristics {
         int row = 0;
         if (!safePositionKing(state, kingPosition)) {
             if ((!(kingPosition[1] > 2 && kingPosition[1] < 6)) && (!(kingPosition[0] > 2 && kingPosition[0] < 6))) {
-                //not safe row not safe col
+                // not safe row not safe col
                 col = countFreeColumn(state, kingPosition);
                 row = countFreeRow(state, kingPosition);
             }
@@ -413,8 +353,9 @@ public abstract class Heuristics {
                 // safe col not safe row
                 col = countFreeColumn(state, kingPosition);
             }
-            //System.out.println("ROW:"+row);
-            //System.out.println("COL:"+col);
+            // System.out.println("ROW:"+row);
+            // System.out.println("COL:"+col);
+
             return (col + row);
         }
 
@@ -432,7 +373,8 @@ public abstract class Heuristics {
         int freeWays = 0;
         int countRight = 0;
         int countLeft = 0;
-        //going right
+
+        // going right
         for (int i = column + 1; i <= 8; i++) {
             currentPosition[0] = row;
             currentPosition[1] = i;
@@ -442,6 +384,7 @@ public abstract class Heuristics {
         }
         if (countRight == 0)
             freeWays++;
+
         //going left
         for (int i = column - 1; i >= 0; i--) {
             currentPosition[0] = row;
@@ -460,14 +403,14 @@ public abstract class Heuristics {
      * @return number of free columns
      */
     public int countFreeColumn(State state, int[] position) {
-        //lock column
+        // lock column
         int row = position[0];
         int column = position[1];
         int[] currentPosition = new int[2];
         int freeWays = 0;
         int countUp = 0;
         int countDown = 0;
-        //going down
+        // going down
         for (int i = row + 1; i <= 8; i++) {
             currentPosition[0] = i;
             currentPosition[1] = column;
@@ -477,7 +420,7 @@ public abstract class Heuristics {
         }
         if (countDown == 0)
             freeWays++;
-        //going up
+        // going up
         for (int i = row - 1; i >= 0; i--) {
             currentPosition[0] = i;
             currentPosition[1] = column;
@@ -499,10 +442,9 @@ public abstract class Heuristics {
     }
 
     /**
-     * @param state
      * @return number of positions needed to eat king in the current state
      */
-    public int getNumEatingPositions(State state) {
+    public int getNumEatingPositions() {
 
         int[] kingPosition = getKingPosition();
 
@@ -514,9 +456,9 @@ public abstract class Heuristics {
         } else if ((kingPosition[0] == 1 && kingPosition[1] == 3) || (kingPosition[0] == 1 && kingPosition[1] == 5) || (kingPosition[0] == 3 && kingPosition[1] == 1) || (kingPosition[0] == 5 && kingPosition[1] == 1) ||
                 (kingPosition[0] == 2 && kingPosition[1] == 4) || (kingPosition[0] == 4 && kingPosition[1] == 2) || (kingPosition[0] == 6 && kingPosition[1] == 4) || (kingPosition[0] == 4 && kingPosition[1] == 6) ||
                 (kingPosition[0] == 7 && kingPosition[1] == 3) || (kingPosition[0] == 3 && kingPosition[1] == 7) || (kingPosition[0] == 7 && kingPosition[1] == 5) || (kingPosition[0] == 5 && kingPosition[1] == 7)) {
-            /*
-                Controlla se il re si trova in una posizione con una citadel alle spalle, quindi basta un pedone per mangiarlo.
-             */
+
+            // Checks in the king is near to a camp, where only a pawn is needed to eat
+
             return 1;
         } else {
             return 2;
@@ -532,7 +474,6 @@ public abstract class Heuristics {
      */
     public int getPawnsOnPosition(String target, int[][][] positions) {
         int result = 0;
-        State.Pawn[][] board = state.getBoard();
 
         for(int i = 0; i < 4; i++) {
             result += getPawnsOnPosition(target, positions, i);
