@@ -1,5 +1,0 @@
-#!/bin/bash
-
-exe="../out/artifacts/replay_games/koukolon.jar"
-
-java -jar $exe

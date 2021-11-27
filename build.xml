@@ -76,6 +76,14 @@
         </java>
     </target>
 
+    <target name="replay_games">
+        <java classname="it.unibo.ai.didattica.competition.tablut.util.replayGames" fork="true">
+            <classpath>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+
 
 
 </project>

@@ -15,7 +15,7 @@ tutor Galassi for Fundamentals of Artificial Intelligence Course,
 which is part of the AI Master Degree of University of Bologna.
 Koukolon was inspired by 2020 Tablut Challenge winner, 
 [BrAInMates](https://github.com/gmurro/Tablut),
-whose heuristics we expanded in order to be more flexible and smart.
+whose heuristics have been expanded in order to be more flexible and smart.
 
 ## Download
 You can download the project through git:
@@ -39,4 +39,11 @@ or
 ./koukolon white 60 localhost
 ```
 If you want to play koukolon's white vs koukolon's black you will have
-to run both the previous commands on different shells. 
+to run both the previous commands on different terminals. 
+
+##Replay last game
+You can rewatch the last game played using in the 'koukolon' directory:
+
+```
+ant replay_games
+```

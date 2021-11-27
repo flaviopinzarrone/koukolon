@@ -16,7 +16,7 @@ public class replayGames {
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
 
         String home = System.getenv("HOME");
-        String path = home + "/IdeaProjects/koukolon/Executables/games_savings/game.dat";
+        String path = System.getProperty("user.dir") + "/Executables/games_savings/game.dat";
         ObjectInputStream in = new ObjectInputStream(new FileInputStream(path));
         Gui gui = new Gui(4);
         ArrayList<State> states = (ArrayList<State>) in.readObject();
